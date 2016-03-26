@@ -3,6 +3,9 @@ class constants():
     class _set(set):
         def __contains__(self, val) -> bool:
             return bool(val and super().__contains__(val))
+        def __or__(self, val: set) -> set:
+            val = super().__or__(val)
+            return val if val == NotImplemented else constants._set(val)
     class _splitstr(str):
         def __iter__(self):
             yield self[:-1]
@@ -19,11 +22,13 @@ class constants():
     #         return False
 
     def __init__(self) -> None:
-        self.comment = constants._set({'#'})
-        self.escape = constants._set({'\\'})
-        self.linebreak = constants._set({';', '\n'})
-        self.quotes = constants._set({"'", '"'})
-        self.whitespace = constants._set({' ', '\n', '\t'})
+        _set = self._set
+        self.comment = _set({'#'})
+        self.escape = _set({'\\'})
+        self.linebreak = _set({';', '\n'}) #ends a line codewise
+        self.endcomment = _set({'\n', '\r'}) | self.comment #ends a line for comments
+        self.quotes = _set({"'", '"'})
+        self.whitespace = _set({' ', '\n', '\t', '\r'})
         self.operators = {
             '+':None, '-':None, '*':None, '/':None, '%':None, '^':None, 
             'bxor':None, '&':None, '|':None, '>>':None, '<<':None, '~':None,
@@ -34,7 +39,11 @@ class constants():
         }
         self.delims = {':': None, ',':None, '.': None}
         self.operators.update(self.delims)
-        self.parens = constants._set({'{', '}', '[', ']', '(', ')'})
+        self.parens = dict((x[0], int(x[1])) for x in ('{0', '[0:', '{0', ')1', ']1:', '}0'))
+        # self.parens = {'{':0, '[':0, '(':0, ')':1 ']':1, '}':1,}
+    @staticmethod
+    def _parentype(p):
+        return p in '])}'
     @property
     def punctuation(self) -> _set:
         return reduce(lambda a,b: a | b, (getattr(self, k) if isinstance(getattr(self, k), constants._set) else\
@@ -46,5 +55,6 @@ class constants():
             'or0', 'nor0', 'and1', 'nand1', 'not2',
             '=3', '<>3', '<4', '>4', '<=4', '>=4',
             '|5', '^6', '&7', '>>8', '<<8', 
-            '+9', '-9', '*a', '/a', '%a', '**b', '~c'
+            '+9', '-9', '*a', '/a', '%a', '**b', '~c',
+            ';d', ':e', ',f'
         )))[oper], 16) 
