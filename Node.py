@@ -26,11 +26,9 @@ class node():
         if __debug__:
             assert hasattr(iterable, '__iter__'), 'cannot run fromiter on a non-iterable...'
         def iterescaped(_iterable):
-            _iterable = iter(_iterable)
             for c in _iterable:
                 yield c + ('' if c not in const.escape else next(_iterable))
         def iterconsts(_iterable):
-            _iterable = iterescaped(_iterable)
             last = ''
             for c in _iterable:
                 if c in const.quotes:
@@ -39,16 +37,22 @@ class node():
                         toyield.append(next(_iterable))
                     yield ''.join(toyield)
                     continue
-                if ((last in punc) and (last + c not in punc)) or (c in punc):
+                print(c, last, sep = '::')
+                if ((last in punc) and (last + c not in punc)) or (c in punc and last not in punc):
                     if last:
                         yield last
                     last = ''
                 last += c
             if last:
                 yield last
-        # def combine()
+        def removewspace(_iterable):
+            return (x for x in _iterable if x not in const.whitespace)
+        def removeAtEOF(_iterable):
+            for x in _iterable:
+                if x == '@eof': break
+                yield x
 
-        iterable = iterconsts(iterable)
+        iterable = removeAtEOF(removewspace(iterconsts(iterescaped(iter(iterable)))))
         args = list(iterable)
         return node(const, args = args)
 
