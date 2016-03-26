@@ -29,8 +29,7 @@ class _dict(dict):
             if isinstance(v, _dict) and v:
                 for n in v.flatpair:
                     yield n
-            else:
-                yield k, v
+            yield k, v
         
     def __contains__(self: '_dict', item: str) -> bool:
         """ Returns true if this or any of the subdicts contain 'item'. """
@@ -55,35 +54,48 @@ class _dict(dict):
     def __repr__(self: '_dict') -> str:
         return '_d' + super().__repr__()
     def __str__(self):
-        return str({str(k): str(self[k]) for k in self})
+        return '{' + ', '.join(str(k) +': ' + str(self[k]) for k in self) + '}'
+
 class knowndict(_dict):
     """ The object that keeps tracks of all the currently known variables. """
 
-    VAL_NAMES = {'global':'_$g', 'local': '_$l', 'ival': '_$i'}
-
+    SCOPE_NAMES = {'global':'_$g', 'local': '_$l', 'control': '_$i'}
+    CONTROL_NAMES = {'last':'$', 'ret':'$ret', 'esc':'$esc'}
     def __init__(self: 'knowndict', const: 'constants', args: dict = None) -> None:
         super().__init__(args or {})
-        self.g, l = _dict(_dict()), _dict()
+        self.g, self.l = _dict(), _dict()
+        self.c = _dict()
 
     def g():
         doc = "The known global variables"
         def fget(self: 'knowndict') -> 'node':
-            return self[self.VAL_NAMES['global']]
+            return self[self.SCOPE_NAMES['global']]
         def fset(self: 'knowndict', value: 'node') -> None:
-            self[self.VAL_NAMES['global']] = value
+            self[self.SCOPE_NAMES['global']] = value
         def fdel(self: 'knowndict') -> None:
-            self[self.VAL_NAMES['global']] = _dict()
+            self[self.SCOPE_NAMES['global']] = _dict()
         return locals()
     g = property(**g())
 
+    def c():
+        doc = "The known control variables"
+        def fget(self: 'knowndict') -> 'node':
+            return self[self.SCOPE_NAMES['control']]
+        def fset(self: 'knowndict', value: 'node') -> None:
+            self.l[self.SCOPE_NAMES['control']] = value
+        def fdel(self: 'knowndict') -> None:
+            self.l[self.SCOPE_NAMES['control']] = _dict()
+        return locals()
+    c = property(**c())
+
     def l():
         doc = "The known local variables"
-        def fget(self: 'knowndict') -> 'node':
-            return self[self.VAL_NAMES['local']]
-        def fset(self: 'knowndict', value: 'node') -> None:
-            self[self.VAL_NAMES['local']] = value
+        def fget(self: 'knowndict') -> Union['node', _dict]:
+            return self[self.SCOPE_NAMES['local']]
+        def fset(self: 'knowndict', value: Union['node', dict]) -> None:
+            self[self.SCOPE_NAMES['local']] = value
         def fdel(self: 'knowndict') -> None:
-            self[self.VAL_NAMES['local']] = _dict()
+            self[self.SCOPE_NAMES['local']] = _dict()
         return locals()
     l = property(**l())
 

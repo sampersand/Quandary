@@ -11,8 +11,10 @@ class node():
                     raise KeyError("Error! both 'genobj' and 'obj' were passed!") #might be a warning in the future
                 kwargs['obj'] = self.getobj(kwargs['data'])
             del kwargs['genobj']
+
         for key in kwargs:
             self._attrs[key] = kwargs[key]
+
         if 'obj' not in self:
             self['obj'] = getobj(None)
 
@@ -44,7 +46,7 @@ class node():
         return objs.none()
 
     def evaluate(self: 'node', gen: gentype, knowns: 'knowndict') -> float:
-        print('@')
+        print(gen, knowns)
 
 def getiter(const: 'constants', iterable: Callable) -> node:
     """ get an iterable, where each successive element is a node."""
