@@ -1,52 +1,49 @@
 import objs
-from Constants import constants
-from KnownDict import knowndict
 class node():
-    def __init__(self, const: constants, **kwargs: dict) -> None:
+    def __init__(self:'node', const: 'constants', **kwargs: dict) -> None:
         super().__setattr__('const', const)
         super().__setattr__('_attrs', {})
         if 'genobj' in kwargs and 'data' in kwargs:
             if kwargs['genobj']:
-                if __debug__:
-                    if 'obj' in kwargs:
-                        raise KeyError("Error! both 'genobj' and 'obj' were passed!") #might be a warning in the future
+                if __debug__ and 'obj' in kwargs:
+                    raise KeyError("Error! both 'genobj' and 'obj' were passed!") #might be a warning in the future
                 kwargs['obj'] = self.getobj(kwargs['data'])
             del kwargs['genobj']
         for key in kwargs:
             self._attrs[key] = kwargs[key]
         if 'obj' not in self:
             self['obj'] = getobj(None)
-    def __getattr__(self, attr: str):
+    def __getattr__(self: 'node', attr: str):
         """ gets 'self._attrs[attr]' """
         return self._attrs[attr]
 
-    def __setattr__(self, attr: str, val) -> None:
+    def __setattr__(self: 'node', attr: str, val) -> None:
         """ sets 'self._attrs[attr]' to val"""
         self._attrs[attr] = val
 
-    def __delattr__(self, attr: str) -> None:
+    def __delattr__(self: 'node', attr: str) -> None:
         """ deletes 'attr' from self._attrs """
         del self._attrs[attr]
 
-    def __repr__(self) -> str:
+    def __repr__(self: 'node') -> str:
         return repr(self.attrs)
 
-    def __contains__(self, attr: str) -> bool:
+    def __contains__(self: 'node', attr: str) -> bool:
         return attr in self._attrs
 
     @property
-    def attrs(self) -> dict:
+    def attrs(self: 'node') -> dict:
         return self._attrs
 
-    def getobj(self, data: (str, None)) -> objs.obj:
+    def getobj(self: 'node', data: (str, None)) -> objs.obj:
         if data == None:
             return objs.none()
         return objs.none()
 
-    def evaluate(self, gen, knowns: knowndict) -> float:
+    def evaluate(self: 'node', gen, knowns: 'knowndict') -> float:
         print('@')
 
-def getiter(const: constants, iterable) -> node:
+def getiter(const: 'constants', iterable) -> node:
     """ get an iterable, where each successive element is a node."""
     punc = const.punctuation
     if __debug__:
