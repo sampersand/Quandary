@@ -2,8 +2,8 @@ from typing import Callable, Union, Any
 from types import GeneratorType as gentype
 import objs
 class node():
-    def __init__(self: 'node', const: 'constants', **kwargs: dict) -> None:
-        super().__setattr__('const', const)
+    def __init__(self: 'node', consts: 'constants', **kwargs: dict) -> None:
+        super().__setattr__('consts', consts)
         super().__setattr__('_attrs', {})
         if 'genobj' in kwargs and 'data' in kwargs:
             if kwargs['genobj']:
@@ -30,9 +30,6 @@ class node():
         """ deletes 'attr' from self._attrs """
         del self._attrs[attr]
 
-    def __repr__(self: 'node') -> str:
-        return repr(self.attrs)
-
     def __contains__(self: 'node', attr: str) -> bool:
         return attr in self._attrs
 
@@ -40,15 +37,43 @@ class node():
     def attrs(self: 'node') -> dict:
         return self._attrs
 
+    def __repr__(self: 'node') -> str:
+        return repr(self.attrs)
+    
+    def __str__(self: 'node') -> str:
+        """ """ #todo this
+        return self.data
+
+
+
     def getobj(self: 'node', data: Union[str, None]) -> objs.obj:
         if data == None:
-            return objs.none()
-        return objs.none()
+            return objs.noneobj()
+        if data in self.consts.operators:
+            return self.consts.operators[data]
+        return objs.noneobj()
 
     def evaluate(self: 'node', gen: gentype, knowns: 'knowndict') -> float:
-        numstack, operstack = [], []
-        print(list(x.data for x in gen))
-        
+        tstack, ostack = [], []
+        def evalt():
+            tstack.append(ostack.pop().obj.evaluate(tstack.pop(), tstack.pop()))
+        for t in gen:
+            if t.data in self.consts.parens:
+                if not self.consts.parens[t.data]:
+                    tstack.append(next(gen).evaluate(knowns))
+                elif self.consts.parens[t.data]:
+                    while ostack:
+                        evalt()
+                    return tstack.pop()
+            elif isinstance(t.obj, objs.operobj):
+                while ostack and self.consts._operpriority(ostack[-1].data) >= self.consts._operpriority(t.data):
+                    evalt()
+                ostack.append(t)
+            else:
+                tstack.append(t)
+        while ostack:
+            evalt()
+        print(list(str(x) for x in tstack),list(str(x) for x in ostack), sep = '\n')
 
 
 
@@ -79,21 +104,21 @@ class node():
 
 
 
-def getiter(const: 'constants', iterable: Callable) -> node:
+def getiter(consts: 'constants', iterable: Callable) -> node:
     """ get an iterable, where each successive element is a node."""
-    punc = const.punctuation
+    punc = consts.punctuation
     if __debug__:
         assert hasattr(iterable, '__iter__'), 'cannot run getiter on a non-iterable...'
     def iesc(_iterable: gentype):
         """ yields each individual character, or two if the first one is a '\\'. """
         for c in _iterable:
-            yield c + ('' if c not in const.escape else next(_iterable))
+            yield c + ('' if c not in consts.escape else next(_iterable))
 
     def itoken(_iterable: gentype):
         """ yields each individual token. """
         last = ''
         for c in _iterable:
-            if c in const.quotes:
+            if c in consts.quotes:
                 toyield = [c]
                 try:
                     toyield.append(next(_iterable))
@@ -113,10 +138,10 @@ def getiter(const: 'constants', iterable: Callable) -> node:
         """ skips over comments. """
         i = iter(_iterable)
         for t in i:
-            if t in const.comment:
+            if t in consts.comment:
                 try:
                     t = next(i)
-                    while t not in const.endcomment:
+                    while t not in consts.endcomment:
                         t = next(i)
                     t = next(i) #else you get stuck with the '#'
                 except StopIteration:
@@ -125,7 +150,7 @@ def getiter(const: 'constants', iterable: Callable) -> node:
 
     def iws(_iterable: gentype):
         """ yields each token if it isn't only a whitespace token. """
-        return (t for t in _iterable if t not in const.whitespace)
+        return (t for t in _iterable if t not in consts.whitespace)
 
     def ieof(_iterable: gentype):
         """ yields each t before and '@eof', if it exists. """
@@ -133,7 +158,7 @@ def getiter(const: 'constants', iterable: Callable) -> node:
             if t == '@eof': break
             yield t
     def iopers(_iterable: gentype):
-        return (node(const, data = x, genobj = True) for x in _iterable)
+        return (node(consts, data = x, genobj = True) for x in _iterable)
 
     return iopers(ieof(iws(icmnt(itoken(iesc(iter(iterable)))))))
 

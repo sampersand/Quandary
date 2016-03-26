@@ -6,7 +6,7 @@ if __name__ == '__main__':
     with open('qfiles/testcode.qq') as f:
         gen = getiter(constants(), f.read())
     n = next(gen)
-    known = knowndict(n.const)
+    known = knowndict(n.consts)
     print('\n----')
     n.evaluate(gen, known)
     print('----\n')
@@ -42,5 +42,4 @@ def evalinp(inp):
         ns.append(getattr(ns.pop(), opers[os.pop()][0])(ns.pop()))
     return ns.pop()
 # print(evalinp('1 + 2 * 3 + 4')) #3,079
-print()
 print(evalinp('1 + 2 * (3 - 4) ^ 5 % 3'))

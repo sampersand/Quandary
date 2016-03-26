@@ -61,8 +61,9 @@ class knowndict(_dict):
 
     SCOPE_NAMES = {'global':'_$g', 'local': '_$l', 'control': '_$i'}
     CONTROL_NAMES = {'last':'$', 'ret':'$ret', 'esc':'$esc'}
-    def __init__(self: 'knowndict', const: 'constants', args: dict = None) -> None:
+    def __init__(self: 'knowndict', consts: 'constants', args: dict = None) -> None:
         super().__init__(args or {})
+        self.consts = consts
         self.g, self.l = _dict(), _dict()
         self.c = _dict()
 
