@@ -46,7 +46,37 @@ class node():
         return objs.none()
 
     def evaluate(self: 'node', gen: gentype, knowns: 'knowndict') -> float:
-        print(gen, knowns)
+        numstack, operstack = [], []
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def getiter(const: 'constants', iterable: Callable) -> node:
     """ get an iterable, where each successive element is a node."""
