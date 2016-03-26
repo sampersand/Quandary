@@ -82,7 +82,6 @@ class node():
                         pass
                 if token not in const.operators:
                     nstack.append(token)
-                # print(token)
             return nstack
         iterable = iopers(ieof(iws(icmnt(itoken(iesc(iter(iterable)))))))
         args = list(iterable)
