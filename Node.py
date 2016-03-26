@@ -21,10 +21,10 @@ class node():
         return {k:self._attrs[k] for k in self._attrs if k != 'const'}
     
     @staticmethod
-    def fromiter(const: constants, iterable):
+    def getiter(const: constants, iterable):
         punc = const.punctuation
         if __debug__:
-            assert hasattr(iterable, '__iter__'), 'cannot run fromiter on a non-iterable...'
+            assert hasattr(iterable, '__iter__'), 'cannot run getiter on a non-iterable...'
         def iesc(_iterable):
             """ yields each individual character, or two if the first one is a '\\'. """
             for c in _iterable:
@@ -74,26 +74,11 @@ class node():
                 if t == '@eof': break
                 yield t
         def iopers(_iterable):
-            """ yields them in order of operations. """
-            nstack, ostack = [], []
-            for token in _iterable:
-                if token in const.parens:
-                    if const.parens[token]: #aka if it's )}]
-                        pass
-                if token not in const.operators:
-                    nstack.append(token)
-            return nstack
+            return ((x, x in const.operators) for x in _iterable)
+
         iterable = iopers(ieof(iws(icmnt(itoken(iesc(iter(iterable)))))))
         args = list(iterable)
         return node(const, args = args)
 
     def __repr__(self) -> str:
         return repr(self.attrs)
-
-with open('qfiles/testcode.qq') as f:
-    n = node.fromiter(constants(), f.read())
-    print(n)
-
-
-
-
