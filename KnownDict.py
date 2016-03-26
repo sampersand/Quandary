@@ -52,7 +52,7 @@ class _dict(dict):
                 return v[item]
 
     def __repr__(self: '_dict') -> str:
-        return '_d' + super().__repr__()
+        return '_' + super().__repr__()
     def __str__(self):
         return '{' + ', '.join(str(k) +': ' + str(self[k]) for k in self) + '}'
 

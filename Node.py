@@ -47,6 +47,7 @@ class node():
 
     def evaluate(self: 'node', gen: gentype, knowns: 'knowndict') -> float:
         numstack, operstack = [], []
+        print(list(x.data for x in gen))
         
 
 

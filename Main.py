@@ -6,9 +6,13 @@ if __name__ == '__main__':
     with open('qfiles/testcode.qq') as f:
         gen = getiter(constants(), f.read())
     n = next(gen)
-    n.evaluate(gen, knowndict(n.const))
-
-#         n = node.fromiter(constants(), f.read())
+    known = knowndict(n.const)
+    print('\n----')
+    n.evaluate(gen, known)
+    print('----\n')
+    if __debug__ and '$dnd' not in known:
+        print(known, end = '\n--\n')
+        print(repr(known))
 def evalinp(inp):
     ns, os = [], []
     opers = {'+':('__radd__',0),
@@ -38,4 +42,5 @@ def evalinp(inp):
         ns.append(getattr(ns.pop(), opers[os.pop()][0])(ns.pop()))
     return ns.pop()
 # print(evalinp('1 + 2 * 3 + 4')) #3,079
+print()
 print(evalinp('1 + 2 * (3 - 4) ^ 5 % 3'))
