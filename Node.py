@@ -1,6 +1,8 @@
+from typing import Callable, Union, Any
+from types import GeneratorType as gentype
 import objs
 class node():
-    def __init__(self:'node', const: 'constants', **kwargs: dict) -> None:
+    def __init__(self: 'node', const: 'constants', **kwargs: dict) -> None:
         super().__setattr__('const', const)
         super().__setattr__('_attrs', {})
         if 'genobj' in kwargs and 'data' in kwargs:
@@ -13,11 +15,12 @@ class node():
             self._attrs[key] = kwargs[key]
         if 'obj' not in self:
             self['obj'] = getobj(None)
-    def __getattr__(self: 'node', attr: str):
+
+    def __getattr__(self: 'node', attr: str) -> Any:
         """ gets 'self._attrs[attr]' """
         return self._attrs[attr]
 
-    def __setattr__(self: 'node', attr: str, val) -> None:
+    def __setattr__(self: 'node', attr: str, val: Any) -> None:
         """ sets 'self._attrs[attr]' to val"""
         self._attrs[attr] = val
 
@@ -35,25 +38,25 @@ class node():
     def attrs(self: 'node') -> dict:
         return self._attrs
 
-    def getobj(self: 'node', data: (str, None)) -> objs.obj:
+    def getobj(self: 'node', data: Union[str, None]) -> objs.obj:
         if data == None:
             return objs.none()
         return objs.none()
 
-    def evaluate(self: 'node', gen, knowns: 'knowndict') -> float:
+    def evaluate(self: 'node', gen: gentype, knowns: 'knowndict') -> float:
         print('@')
 
-def getiter(const: 'constants', iterable) -> node:
+def getiter(const: 'constants', iterable: Callable) -> node:
     """ get an iterable, where each successive element is a node."""
     punc = const.punctuation
     if __debug__:
         assert hasattr(iterable, '__iter__'), 'cannot run getiter on a non-iterable...'
-    def iesc(_iterable):
+    def iesc(_iterable: gentype):
         """ yields each individual character, or two if the first one is a '\\'. """
         for c in _iterable:
             yield c + ('' if c not in const.escape else next(_iterable))
 
-    def itoken(_iterable):
+    def itoken(_iterable: gentype):
         """ yields each individual token. """
         last = ''
         for c in _iterable:
@@ -73,7 +76,7 @@ def getiter(const: 'constants', iterable) -> node:
             last += c
         yield last
 
-    def icmnt(_iterable):
+    def icmnt(_iterable: gentype):
         """ skips over comments. """
         i = iter(_iterable)
         for t in i:
@@ -87,16 +90,16 @@ def getiter(const: 'constants', iterable) -> node:
                     raise SyntaxError('Error: Unclosed comment!')
             yield t
 
-    def iws(_iterable):
+    def iws(_iterable: gentype):
         """ yields each token if it isn't only a whitespace token. """
         return (t for t in _iterable if t not in const.whitespace)
 
-    def ieof(_iterable):
+    def ieof(_iterable: gentype):
         """ yields each t before and '@eof', if it exists. """
         for t in _iterable:
             if t == '@eof': break
             yield t
-    def iopers(_iterable):
+    def iopers(_iterable: gentype):
         return (node(const, data = x, genobj = True) for x in _iterable)
 
     return iopers(ieof(iws(icmnt(itoken(iesc(iter(iterable)))))))
