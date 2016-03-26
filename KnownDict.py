@@ -1,4 +1,5 @@
 from Node import node
+from typing import Union
 from types import GeneratorType as gentype
 
 class _dict(dict):
@@ -58,7 +59,7 @@ class _dict(dict):
 class knowndict(_dict):
     """ The object that keeps tracks of all the currently known variables. """
 
-    VAL_NAMES = {'global':'_$g', 'local': '_$l'}
+    VAL_NAMES = {'global':'_$g', 'local': '_$l', 'ival': '_$i'}
 
     def __init__(self: 'knowndict', const: 'constants', args: dict = None) -> None:
         super().__init__(args or {})
@@ -85,8 +86,6 @@ class knowndict(_dict):
             self[self.VAL_NAMES['local']] = _dict()
         return locals()
     l = property(**l())
-
-
 
 
 
