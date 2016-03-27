@@ -32,8 +32,8 @@ class constants():
         self.whitespace = _set({' ', '\n', '\t', '\r'})
         self.operators = {
             '+': operobj('+'), '-': operobj('-'), '*': operobj('*'),
-            '/': operobj('/'), '%': operobj('%'), '^': operobj('^'), 
-            'bxor': operobj('bxor'), '&': operobj('&'), '|': operobj('|'), '>>': operobj('>>'), 
+            '/': operobj('/'), '%': operobj('%'), '**': operobj('**'), 
+            '^': operobj('^'), '&': operobj('&'), '|': operobj('|'), '>>': operobj('>>'), 
             '<<': operobj('<<'), '~': operobj('~'),
             '=': operobj('='), '<>': operobj('<>'), 
             '<': operobj('<'), '<=': operobj('<='), '>': operobj('>'), '>=': operobj('>='), 
