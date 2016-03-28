@@ -14,8 +14,8 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
         if __debug__:
             assert oper in opers, "Trying to evaloper with no operator!"
             reqs = opers[oper]['reqs']
-            assert len(tstack) >= reqs[0], "Too few tokens {} to perform '{}' ({})".format(tstack, oper, reqs[0])
-            assert len(ostack) >= reqs[1], "Too few opers {} to perform '{}' ({})".format(ostack, oper, reqs[1])
+            assert len(tstack) >= min(reqs[0]), "Too few tokens {} to perform '{}' ({})".format(tstack, oper, reqs[0])
+            assert len(ostack) >= min(reqs[1]), "Too few opers {} to perform '{}' ({})".format(ostack, oper, reqs[1])
             del reqs
         ret = NotImplemented
 
@@ -81,6 +81,12 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
         ret = NotImplemented
         if ret == NotImplemented and oper == ';':
             ret = tstack.pop()
+        if ret == NotImplemented and oper == '.':
+            quit(str(tstack) + str(ostack))
+            left = tstack.pop(-2)
+            right = tstack.pop()
+            # if isinstance(left.obj, intobj) and isinstance(right.obj)
+            print(tstack)
         #nothing else is defined yet
         return ret
 
