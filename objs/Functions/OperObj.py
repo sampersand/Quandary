@@ -12,31 +12,36 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
             assert len(ostack) >= reqs[1], "Too few opers ({}) to perform {} ({})".format(ostack, oper, reqs[1])
             del reqs
         ret = NotImplemented
-        if oper in opers['assignment']:
+
+        #first see if it's a simple operator
+        if ret == NotImplemented and oper in opers['simple_binary']:
+            ret = self._evalsimple(tstack, ostack, knowns, oper)
+
+        #then see if it's an assignment
+        elif ret == NotImplemented and oper in opers['assignment']:
             ret = self._evalassign(tstack, ostack, knowns, oper)
-    #     args = [next(gen) for x in range(base.)]
 
-    #     if oper in left.consts.opers['assignment']:
-    #         ret = self._evaloper(knowns, gen, *args, **kwargs)
+        #lastly, throw an exception
+        if ret == NotImplemented:
+            raise AttributeError("No known way to apply operator '{}' to stacks '{}' and '{}'".format(\
+                oper, tstack, ostack))
+        return ret
 
-
-    #     #first, try 'a.__OPER__.(b)'
-    #     if ret == NotImplemented and hasattr(left.obj, left.consts._loperfuncs[oper]): # if raises KeyError, its b/c
-    #                                                                          # oper isn't recognized
-    #         ret = getattr(left.obj, left.consts._loperfuncs[oper])(left, rght)
-        
-    #     #second, try 'b.__iOPER__.(a)'
-    #     if ret == NotImplemented and hasattr(rght.obj, left.consts._roperfuncs[oper]): # KeyError = oper isnt recognized
-    #         ret = getattr(rght.obj, left.consts._roperfuncs[oper])(rght, left)
-        
-    #     #lastly, throw an exception
-    #     if ret == NotImplemented:
-    #         raise AttributeError("No known way to apply operator '{}' to objects '{}' and '{}'".format(\
-    #             oper, left, rght))
-    #     return ret
 
     def _evalsimple(self: 'operobj', tstack: list, ostack: list, knowns: 'knownsdict', oper: str) -> 'node':
-        pass
+        ret = NotImplemented
+        #first, try 'a.__OPER__.(b)'
+        left = tstack.pop(-2)
+        right = tstack.pop()
+        if ret == NotImplemented and hasattr(left.obj, left.consts._loperfuncs[oper]): # if raises KeyError, its b/c
+                                                                             # oper isn't recognized
+            ret = getattr(left.obj, left.consts._loperfuncs[oper])(left, right)
+        
+        #second, try 'b.__iOPER__.(a)'
+        if ret == NotImplemented and hasattr(right.obj, left.consts._roperfuncs[oper]): # KeyError = oper isnt recognized
+            ret = getattr(right.obj, left.consts._roperfuncs[oper])(right, left)
+        return ret
+
     def _evalassign(self: 'operobj', tstack: list, ostack: list, knowns: 'knownsdict', oper: str) -> 'node':
         direc = oper == '->'
         left = tstack.pop(-1 -direc) #if direc is 1, pop second to last.

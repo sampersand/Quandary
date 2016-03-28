@@ -124,7 +124,6 @@ def getiter(consts: 'constants', iterable: Callable) -> node:
 
     def iws(_iterable: gentype):
         """ yields each token if it isn't only a whitespace token. """
-        quit(list(_iterable))
         return (t for t in _iterable if t not in consts.punc.whitespace)
 
     def ieof(_iterable: gentype):
