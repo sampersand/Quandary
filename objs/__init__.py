@@ -11,7 +11,6 @@ if '__init__' not in __name__:
                 for x in _import(_obj[1:], package + _obj[0] + '.'):
                     yield x
     for _obj_name, _obj_type in _import(__toimport__, 'objs.'):
-        print(_obj_name)
         locals()[_obj_name] = _obj_type
     # locals().update()
     del _import, _obj_name, _obj_type

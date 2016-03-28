@@ -61,7 +61,7 @@ class operobj(funcobj):
         #first, try 'a.__OPER__.(b)'
         if ret == NotImplemented and hasattr(left.obj, left.consts.opers[oper]['loper']): # KeyError: oper isnt recognized
             ret = getattr(left.obj, left.consts.opers[oper]['loper'])(left, right)
-        
+        print(left.obj, left.consts.opers[oper]['loper'], hasattr(left.obj, '__mul__'))
         #second, try 'b.__iOPER__.(a)'
         if ret == NotImplemented and hasattr(right.obj, left.consts.opers[oper]['roper']): # KeyError: oper isnt recognized
             ret = getattr(right.obj, left.consts.opers[oper]['roper'])(right, left)
@@ -101,6 +101,7 @@ class operobj(funcobj):
             """
             if ret == NotImplemented and (len(tstack) - len(ostack)) == 1:
                 ret = node(knowns.consts, data = str('0.'+self._pop(tstack, knowns).data), genobj = True)
+            
             if ret == NotImplemented and (len(tstack) - len(ostack)) == 2:
                 ret = node(knowns.consts,
                            data = str(self._pop(tstack, knowns, -2).data + '.' + self._pop(tstack, knowns).data),
