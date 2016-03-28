@@ -13,7 +13,7 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
             del reqs
         ret = NotImplemented
         if oper in opers['assignment']:
-            ret = _evalassign(tstack, ostack, knowns, oper)
+            ret = self._evalassign(tstack, ostack, knowns, oper)
     #     args = [next(gen) for x in range(base.)]
 
     #     if oper in left.consts.opers['assignment']:
@@ -35,12 +35,14 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
     #             oper, left, rght))
     #     return ret
 
-    def _evaloper(self: 'operobj', tstack: list, ostack: list, knowns: 'knownsdict', oper: str) -> 'node':
+    def _evalsimple(self: 'operobj', tstack: list, ostack: list, knowns: 'knownsdict', oper: str) -> 'node':
+        pass
+    def _evalassign(self: 'operobj', tstack: list, ostack: list, knowns: 'knownsdict', oper: str) -> 'node':
         direc = oper == '->'
-        left = args.pop(-1 -direc) #if direc is 1, pop second to last.
-        right = args.pop()
+        left = tstack.pop(-1 -direc) #if direc is 1, pop second to last.
+        right = tstack.pop()
         if __debug__:
-            assert type(right.obj) == varobj, "Not able to assignment a value to the non-basic object '{}'".format(right.obj)
+            assert type(right.obj) == varobj, "Not able to assignment a value to the non-var obj '{}'".format(right.obj)
             assert list(sorted(right.attrs.keys())) == ['data', 'obj'] #can only be data and object,
                                                                        # nothing more complex than that
         knowns[right.data] = left
