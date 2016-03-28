@@ -47,7 +47,7 @@ class node():
         return str(self.data)
 
     def __deepcopy__(self, memo):
-        return node(self.consts, deepcopy(self._attrs, memo))
+        return node(self.consts, kwargs = deepcopy(self._attrs, memo))
 
     @staticmethod
     def evalnode(gen: gentype, knowns: 'knowndict') -> 'node':

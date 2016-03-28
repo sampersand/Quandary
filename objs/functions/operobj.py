@@ -1,7 +1,8 @@
+import copy
+from decimal import Decimal
 from typing import Callable
 from types import GeneratorType as gentype
 from node import node
-import copy
 varobj = __import__((__package__ + ' ')[:__package__.find('.')])._import('varobj')
 class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('funcobj')):
     """ An operator. """
@@ -80,20 +81,20 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
                    knowns: 'knownsdict',
                    oper: str) -> ('node', NotImplemented):
         ret = NotImplemented
+
         if ret == NotImplemented and oper == ';':
             ret = tstack.pop()
+
         if ret == NotImplemented and oper == '.':
             """ if len(ostack) - len(tstack) == 2: 'tstack[-2].tstack[-1]'
                 if len(ostack) - len(tstack) == 1: '0.tstack[-1]'
                 else: NotImplemented
             """
-            if len(ostack) - len(tstack) == 2:
-
-            left = tstack.pop(-2)
-            right = tstack.pop()
-            # if isinstance(left.obj, intobj) and isinstance(right.obj)
-            print(tstack)
-        #nothing else is defined yet
+            if ret == NotImplemented and (len(tstack) - len(ostack)) == 1:
+                ret = node(knowns.consts, data = str('0.'+tstack.pop().data), genobj = True)
+            if ret == NotImplemented and (len(tstack) - len(ostack)) == 2:
+                ret = node(knowns.consts, data = str(tstack.pop(-2).data + '.' + tstack.pop().data), genobj = True)
+        
         return ret
 
 

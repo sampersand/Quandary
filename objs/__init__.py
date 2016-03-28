@@ -26,7 +26,7 @@ if '__init__' not in __name__: #aka, it's not being imported from NoneObj or the
         if data in node.consts.opers:
             return node.consts.opers[data]['obj']()
         for k, v in _regexes.items():
-            if k.match(data):
+            if k.fullmatch(data):
                 return v()
         return varobj()
 # g=[__import__('random').randint(1,100)]
