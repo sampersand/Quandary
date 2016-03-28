@@ -37,13 +37,15 @@ class _dict(dict):
 
     def __getitem__(self: '_dict', item: object) -> object:
         if __debug__ and item not in self.flat:
-            raise KeyError("'{}' doesn't exist!".format(item))
+            raise KeyError("key '{}' doesn't exist!".format(item))
         return dict(self.flatpair)[item]
         # for k, v in self.flatpair:
         #     if k == item:
         #         return v
 
     def __delitem__(self: '_dict', item: object) -> None:
+        if __debug__ and item not in self.flat:
+            raise KeyError("key '{}' doesn't exist!".format(item))
         for k in self:
             v = super().__getitem__(k)
             if k == item:

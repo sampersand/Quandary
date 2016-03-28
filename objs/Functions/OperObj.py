@@ -4,16 +4,17 @@ varobj = __import__((__package__ + ' ')[:__package__.find('.')])._import('varobj
 class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('funcobj')):
     """ An operator. """
     def evaloper(self: 'operobj', tstack: list, ostack: list, knowns: 'knownsdict', oper: str) -> 'node':
+        opers = knowns.consts.keywords.opers
         if __debug__:
-            assert oper in knowns.consts.keywords.opers, "Trying to evaloper with no operator!"
-            reqs = knowns.consts.keywords.opers[oper]['requirements']
-            assert len(tstack) >= reqs[0]
-            assert len(tstack) >= reqs[1]
+            assert oper in opers, "Trying to evaloper with no operator!"
+            reqs = opers[oper]['reqs']
+            assert len(tstack) >= reqs[0], "Too few tokens ({}) to perform {} ({})".format(len(tstack), oper, reqs[0])
+            assert len(ostack) >= reqs[1], "Too few opers ({}) to perform {} ({})".format(len(ostack), oper, reqs[1])
             del reqs
-        if oper in knowns.consts.opers['assignment']:
-            pass
+        ret = NotImplemented
+        if oper in opers['assignment']:
+            ret = _evalassign(tstack, ostack, knowns, oper)
     #     args = [next(gen) for x in range(base.)]
-    #     ret = NotImplemented
 
     #     if oper in left.consts.opers['assignment']:
     #         ret = self._evaloper(knowns, gen, *args, **kwargs)
@@ -34,15 +35,19 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
     #             oper, left, rght))
     #     return ret
 
-    # def _evaloper(self: 'operobj', knowns: 'knownsdict', gen: Callable) -> 'node':
-    #     oper = kwargs['oper']
-    #     direc = oper == '->'
-    #     left = args[not direc]
-    #     rght = args[direc]
-    #     if __debug__:
-    #         assert type(rght.obj) == varobj, "Not able to assignment a value to the non-basic object '{}'".\
-    #             format(rght.obj)
-    #         assert list(sorted(rght.attrs.keys())) == ['data', 'obj'] #can only be data and object,
-    #                                                                    # nothing more complex than that
-    #     knowns[rght.data] = left
-    #     return knowns[rght.data]
+    def _evaloper(self: 'operobj', tstack: list, ostack: list, knowns: 'knownsdict', oper: str) -> 'node':
+        direc = oper == '->'
+        left = args.pop(-1 -direc) #if direc is 1, pop second to last.
+        right = args.pop()
+        if __debug__:
+            assert type(right.obj) == varobj, "Not able to assignment a value to the non-basic object '{}'".format(right.obj)
+            assert list(sorted(right.attrs.keys())) == ['data', 'obj'] #can only be data and object,
+                                                                       # nothing more complex than that
+        knowns[right.data] = left
+        return knowns[right.data]
+
+
+
+
+
+
