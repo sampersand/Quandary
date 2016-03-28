@@ -1,5 +1,6 @@
 from typing import Callable, Any
 from types import GeneratorType as gentype
+from copy import deepcopy
 import objs
 class node():
     def __init__(self: 'node', consts: 'constants', **kwargs: dict) -> None:
@@ -12,11 +13,12 @@ class node():
                 kwargs['obj'] = objs.getobj(self, kwargs['data'])
             del kwargs['genobj']
 
+        if 'obj' not in kwargs:
+            kwargs['obj'] = objs.getobj(self, None)
+
         for key in kwargs:
             self._attrs[key] = kwargs[key]
 
-        if 'obj' not in self:
-            self._attrs['obj'] = objs.getobj(self, None)
 
     def __getattr__(self: 'node', attr: str) -> Any:
         """ gets 'self._attrs[attr]' """
@@ -44,13 +46,16 @@ class node():
         """ """ #todo this
         return str(self.data)
 
+    def __deepcopy__(self, memo):
+        return node(self.consts, deepcopy(self._attrs, memo))
+
     def evalnode(self: 'node', gen: gentype, knowns: 'knowndict') -> 'node':
         ts, os = [], [] #token / oper stack
         def reduce_os():
             o = os.pop()
             if __debug__:
                 assert issubclass(o.obj, objs.operobj), "Expected an operobj, not a '{}'".format(o.obj)
-            ts.append(o.obj.evalobj(ts.pop(-2), ts.pop(), oper = o.data)) #-2 is because they need to be flipped
+            ts.append(o.obj.evalobj(knowns, ts.pop(-2), ts.pop(), oper = o.data)) #-2 is because they need to be flipped
         for t in gen:
             if t.data in self.consts.parens:
                 if not self.consts.parens[t.data]:
@@ -68,6 +73,7 @@ class node():
         while os:
             reduce_os()
         return ts.pop()
+
 def getiter(consts: 'constants', iterable: Callable) -> node:
     """ get an iterable, where each successive element is a node."""
     punc = consts.punctuation
@@ -123,7 +129,7 @@ def getiter(consts: 'constants', iterable: Callable) -> node:
             yield t
     def iopers(_iterable: gentype):
         return (node(consts, data = x, genobj = True) for x in _iterable)
+
     yield node(consts)
     for t in iopers(ieof(iws(icmnt(itoken(iesc(iter(iterable))))))):
         yield t
-

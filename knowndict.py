@@ -1,4 +1,4 @@
-from Node import node
+from node import node
 from typing import Union
 from types import GeneratorType as gentype
 
@@ -35,7 +35,7 @@ class _dict(dict):
         """ Returns true if this or any of the subdicts contain 'item'. """
         return item in self.flat
 
-    def __getitem__(self: '_dict', item: str) -> Union['node', 'dict']:
+    def __getitem__(self: '_dict', item: str) -> ('node', 'dict'):
         if __debug__ and item not in self.flat:
             raise KeyError("'{}' doesn't exist!".format(item))
         return dict(self.flatpair)[item]
@@ -91,9 +91,9 @@ class knowndict(_dict):
 
     def l():
         doc = "The known local variables"
-        def fget(self: 'knowndict') -> Union['node', _dict]:
+        def fget(self: 'knowndict') -> ('node', _dict):
             return self[self.SCOPE_NAMES['local']]
-        def fset(self: 'knowndict', value: Union['node', dict]) -> None:
+        def fset(self: 'knowndict', value: ('node', dict)) -> None:
             self[self.SCOPE_NAMES['local']] = value
         def fdel(self: 'knowndict') -> None:
             self[self.SCOPE_NAMES['local']] = _dict()
