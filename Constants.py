@@ -31,16 +31,16 @@ class constants():
         self.quotes = _set({"'", '"'})
         self.whitespace = _set({' ', '\n', '\t', '\r'})
         self.operators = {
-            '+': operobj('+'), '-': operobj('-'), '*': operobj('*'),
-            '/': operobj('/'), '%': operobj('%'), '**': operobj('**'), 
-            '^': operobj('^'), '&': operobj('&'), '|': operobj('|'), '>>': operobj('>>'), 
-            '<<': operobj('<<'), '~': operobj('~'),
-            '=': operobj('='), '<>': operobj('<>'), 
-            '<': operobj('<'), '<=': operobj('<='), '>': operobj('>'), '>=': operobj('>='), 
-            'and': operobj('and'), 'or': operobj('or'), 'nand': operobj('nand'), 'nor': operobj('nor'),
-            '->': operobj('->'), '<-': operobj('<-'),
+            '+': operobj, '-': operobj, '*': operobj,
+            '/': operobj, '%': operobj, '**': operobj, 
+            '^': operobj, '&': operobj, '|': operobj, '>>': operobj, 
+            '<<': operobj, '~': operobj,
+            '=': operobj, '<>': operobj, 
+            '<': operobj, '<=': operobj, '>': operobj, '>=': operobj, 
+            'and': operobj, 'or': operobj, 'nand': operobj, 'nor': operobj,
+            '->': operobj, '<-': operobj,
         }
-        self.delims = {':':  operobj(':'), ',': operobj(','), '.':  operobj('.'), ';':  operobj(';')}
+        self.delims = {':':  operobj, ',': operobj, '.':  operobj, ';':  operobj}
         self.operators.update(self.delims)
         self.parens = dict((x[0], int(x[1])) for x in ('(0', '[0:', '{0', ')1', ']1:', '}0'))
         # self.parens = {'{':0, '[':0, '(':0, ')':1 ']':1, '}':1,}
@@ -52,7 +52,7 @@ class constants():
         return reduce(lambda a,b: a | b, (getattr(self, k) if isinstance(getattr(self, k), constants._set) else\
                         constants._set(getattr(self, k).keys()) for k in vars(self)))
 
-    def _operpriority(self, oper:str) -> int:
+    def _evalorder(self, oper:str) -> int:
         """ smaller it is, the more important it is"""
         return {
             ':':0, '.':0, #1 and 2 are used for unary

@@ -1,4 +1,4 @@
-from typing import Callable, Union, Any
+from typing import Callable, Any
 from types import GeneratorType as gentype
 import objs
 class node():
@@ -9,18 +9,18 @@ class node():
             if kwargs['genobj']:
                 if __debug__ and 'obj' in kwargs:
                     raise KeyError("Error! both 'genobj' and 'obj' were passed!") #might be a warning in the future
-                kwargs['obj'] = self.getobj(kwargs['data'])
+                kwargs['obj'] = objs.getobj(self, kwargs['data'])
             del kwargs['genobj']
 
         for key in kwargs:
             self._attrs[key] = kwargs[key]
 
         if 'obj' not in self:
-            self['obj'] = getobj(None)
+            self._attrs['obj'] = objs.getobj(self, None)
 
     def __getattr__(self: 'node', attr: str) -> Any:
         """ gets 'self._attrs[attr]' """
-        return self._attrs[attr]
+        return self._attrs[attr] if attr in self else None
 
     def __setattr__(self: 'node', attr: str, val: Any) -> None:
         """ sets 'self._attrs[attr]' to val"""
@@ -42,68 +42,32 @@ class node():
     
     def __str__(self: 'node') -> str:
         """ """ #todo this
-        return self.data
+        return str(self.data)
 
-
-
-    def getobj(self: 'node', data: Union[str, None]) -> objs.obj:
-        if data == None:
-            return objs.noneobj()
-        if data in self.consts.operators:
-            return self.consts.operators[data]
-        return objs.noneobj()
-
-    def evaluate(self: 'node', gen: gentype, knowns: 'knowndict') -> float:
-        tstack, ostack = [], []
-        def evalt():
-            tstack.append(ostack.pop().obj.evaluate(tstack.pop(), tstack.pop()))
+    def evalnode(self: 'node', gen: gentype, knowns: 'knowndict') -> 'node':
+        ts, os = [], [] #token / oper stack
+        def reduce_os():
+            o = os.pop()
+            if __debug__:
+                assert issubclass(o.obj, objs.operobj), "Expected an operobj, not a '{}'".format(o.obj)
+            ts.append(o.obj.evalobj(ts.pop(-2), ts.pop(), oper = o.data)) #-2 is because they need to be flipped
         for t in gen:
             if t.data in self.consts.parens:
                 if not self.consts.parens[t.data]:
-                    tstack.append(next(gen).evaluate(knowns))
-                elif self.consts.parens[t.data]:
-                    while ostack:
-                        evalt()
-                    return tstack.pop()
-            elif isinstance(t.obj, objs.operobj):
-                while ostack and self.consts._operpriority(ostack[-1].data) >= self.consts._operpriority(t.data):
-                    evalt()
-                ostack.append(t)
+                    ts.append(next(gen).evalnode(gen, knowns))
+                else:
+                    while os:
+                        reduce_os()
+                    return ts.pop()
+            elif issubclass(t.obj, objs.operobj):
+                while os and self.consts._evalorder(os[-1].data) <= self.consts._evalorder(t.data):
+                    reduce_os()
+                os.append(t)
             else:
-                tstack.append(t)
-        while ostack:
-            evalt()
-        print(list(str(x) for x in tstack),list(str(x) for x in ostack), sep = '\n')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                ts.append(t)
+        while os:
+            reduce_os()
+        return ts.pop()
 def getiter(consts: 'constants', iterable: Callable) -> node:
     """ get an iterable, where each successive element is a node."""
     punc = consts.punctuation
@@ -159,6 +123,7 @@ def getiter(consts: 'constants', iterable: Callable) -> node:
             yield t
     def iopers(_iterable: gentype):
         return (node(consts, data = x, genobj = True) for x in _iterable)
-
-    return iopers(ieof(iws(icmnt(itoken(iesc(iter(iterable)))))))
+    yield node(consts)
+    for t in iopers(ieof(iws(icmnt(itoken(iesc(iter(iterable))))))):
+        yield t
 
