@@ -82,8 +82,10 @@ class knowndict(_dict):
         doc = "The known global variables"
         def fget(self: 'knowndict') -> 'node':
             return self[self.SCOPE_NAMES['global']]
+
         def fset(self: 'knowndict', value: 'node') -> None:
             self[self.SCOPE_NAMES['global']] = value
+
         def fdel(self: 'knowndict') -> None:
             self[self.SCOPE_NAMES['global']] = _dict()
         return locals()
@@ -93,8 +95,10 @@ class knowndict(_dict):
         doc = "The known control variables"
         def fget(self: 'knowndict') -> 'node':
             return self.l[self.SCOPE_NAMES['control']]
+
         def fset(self: 'knowndict', value: 'node') -> None:
             self.l[self.SCOPE_NAMES['control']] = value
+
         def fdel(self: 'knowndict') -> None:
             self.l[self.SCOPE_NAMES['control']] = _dict()
         return locals()
@@ -104,25 +108,18 @@ class knowndict(_dict):
         doc = "The known local variables"
         def fget(self: 'knowndict') -> ('node', _dict):
             return self[self.SCOPE_NAMES['local']]
+
         def fset(self: 'knowndict', value: ('node', dict)) -> None:
             self[self.SCOPE_NAMES['local']] = value
+
         def fdel(self: 'knowndict') -> None:
             self[self.SCOPE_NAMES['local']] = _dict()
         return locals()
     l = property(**l())
 
-    def __setitem__(self: '_dict', item: str, val: str) -> None:
+    def __setitem__(self: '_dict', item: str, val: 'node') -> None:
+        #TODO: make it so when you set an item, and it exists further down, it sets it there instead.
         ret = super().__setitem__(item, val)
-        self.c.last = item
+        if item[:2] != '_$':
+            self.c.last = val
         return ret
-        # for k, v in self.flatpair:
-        #     if k == item:
-        #         return v
-
-
-
-
-
-
-
-
