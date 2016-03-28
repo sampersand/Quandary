@@ -31,11 +31,11 @@ class _dict(dict):
                     yield n
             yield k, v
         
-    def __contains__(self: '_dict', item: str) -> bool:
+    def __contains__(self: '_dict', item: object) -> bool:
         """ Returns true if this or any of the subdicts contain 'item'. """
         return item in self.flat
 
-    def __getitem__(self: '_dict', item: str) -> ('node', 'dict'):
+    def __getitem__(self: '_dict', item: object) -> object:
         if __debug__ and item not in self.flat:
             raise KeyError("'{}' doesn't exist!".format(item))
         return dict(self.flatpair)[item]
@@ -43,7 +43,7 @@ class _dict(dict):
         #     if k == item:
         #         return v
 
-    def __delitem__(self: '_dict', item: str) -> None:
+    def __delitem__(self: '_dict', item: object) -> None:
         for k in self:
             v = super().__getitem__(k)
             if k == item:
@@ -51,10 +51,24 @@ class _dict(dict):
             if isinstance(v, dict) and item in v:
                 return v[item]
 
+    def __getattr__(self: '_dict', attr: object) -> object:
+        return attr in self and self.__getitem__(attr) else super().__getattr__(attr)
+    def __setattr__(self: '_dict', attr: object, val: object) -> None:
+        return attr in self and self.__setitem__(attr, val) else super().__setattr__(attr, val)
+    def __delattr__(self: '_dict', attr: object) -> None:
+        return attr in self and self.__delitem__(attr) else super().__delattr__(attr)
+
     def __repr__(self: '_dict') -> str:
         return '_' + super().__repr__()
+
     def __str__(self):
         return '{' + ', '.join(str(k) +': ' + str(self[k]) for k in self) + '}'
+
+    def __add__(self, other):
+        ret = self.copy()
+        ret.update(other)
+        return ret
+
 class _control(_dict):
     CONTROL_NAMES = {'last':'$', 'ret':'$ret', 'esc':'$esc'}
     def last():
@@ -117,7 +131,7 @@ class knowndict(_dict):
         return locals()
     l = property(**l())
 
-    def __setitem__(self: '_dict', item: str, val: 'node') -> None:
+    def __setitem__(self: '_dict', item: object, val: 'node') -> None:
         #TODO: make it so when you set an item, and it exists further down, it sets it there instead.
         ret = super().__setitem__(item, val)
         if item[:2] != '_$':

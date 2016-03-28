@@ -5,7 +5,7 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
     """ An operator. """
     def evaloper(self: 'operobj', tstack: list, ostack: list, knowns: 'knownsdict', oper: str) -> 'node':
         if __debug__:
-            assert oper in known.consts.keywords.operators
+            assert oper in knowns.consts.keywords.operators
         if oper in knowns.consts.operators['assignment']:
             pass
     #     args = [next(gen) for x in range(base.)]
