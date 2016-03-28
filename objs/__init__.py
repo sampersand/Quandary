@@ -1,12 +1,10 @@
+import re, os
 __toimport__ = ('obj', 'nullobj', 'noneobj')
-def _import_file(_obj, _path):
-    return 
 
-def _import(_obj):
+def _import(_obj: str) -> 'obj':
     return __import__(__package__, fromlist = _obj).__getattribute__(_obj)
 
 if '__init__' not in __name__: #aka, it's not being imported from NoneObj or the ilk
-    import os
     for _dir in os.walk('./' + __package__.replace('.', '/')):
         if '__init__.py' in _dir[2]:
             module = __import__(_dir[0].replace('./','').replace('/', '.') + '.__init__', fromlist = '__toimport__')
@@ -16,6 +14,20 @@ if '__init__' not in __name__: #aka, it's not being imported from NoneObj or the
             for _obj in module.__toimport__:
                 locals()[_obj.lower()] = __import__(module.__package__ + '.' + _obj, fromlist = _obj).\
                                          __getattribute__(_obj.lower())
-    del os, _dir, module, _obj
+    _regexes = {re.compile(o._regex):o for o in locals().values() if hasattr(o, '_regex')}
+    del os, _dir, module, _obj, re
     __all__ = [o for o in locals().keys() if 'obj' in o]
-    
+
+    def getobj(node: 'node', data: (str, None)) -> obj:
+        if data == None:
+            return noneobj
+        if data == '':
+            return nullobj
+        if data in node.consts.operators:
+            return node.consts.operators[data]
+        for k, v in _regexes.items():
+            if k.findall(data):
+                return v
+        return nullobj
+# g=[__import__('random').randint(1,100)]
+# while g.append(int(input()))or g[-1]!=g[0]:print(g[-1]<g[0],len(g))
