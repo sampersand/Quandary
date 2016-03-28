@@ -59,12 +59,12 @@ class operobj(funcobj):
         left = self._pop(tstack, knowns, -2)
         right = self._pop(tstack, knowns)
         #first, try 'a.__OPER__.(b)'
-        if ret == NotImplemented and hasattr(left.obj, left.consts._loperfuncs[oper]): # KeyError: oper isnt recognized
-            ret = getattr(left.obj, left.consts._loperfuncs[oper])(left, right)
+        if ret == NotImplemented and hasattr(left.obj, left.consts.opers[oper]['loper']): # KeyError: oper isnt recognized
+            ret = getattr(left.obj, left.consts.opers[oper]['loper'])(left, right)
         
         #second, try 'b.__iOPER__.(a)'
-        if ret == NotImplemented and hasattr(right.obj, left.consts._roperfuncs[oper]): # KeyError: oper isnt recognized
-            ret = getattr(right.obj, left.consts._roperfuncs[oper])(right, left)
+        if ret == NotImplemented and hasattr(right.obj, left.consts.opers[oper]['roper']): # KeyError: oper isnt recognized
+            ret = getattr(right.obj, left.consts.opers[oper]['roper'])(right, left)
         return ret
 
     def _evalassign(self: 'operobj',

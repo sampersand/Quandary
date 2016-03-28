@@ -33,20 +33,20 @@ class constants():
             }),
             'simple_binary': _dict({
                 'math': _dict({
-                    '**': _dict({'obj':operobj, 'rank':  3, 'reqs': ((2,), (0,))}),
-                    '*' : _dict({'obj':operobj, 'rank':  4, 'reqs': ((2,), (0,))}),
-                    '/' : _dict({'obj':operobj, 'rank':  4, 'reqs': ((2,), (0,))}),
-                    '%' : _dict({'obj':operobj, 'rank':  4, 'reqs': ((2,), (0,))}),
-                    '+' : _dict({'obj':operobj, 'rank':  5, 'reqs': ((2,), (0,))}),
-                    '-' : _dict({'obj':operobj, 'rank':  5, 'reqs': ((2,), (0,))}),
+                    '**': _dict({'obj':operobj, 'rank':  3, 'reqs': ((2,), (0,)), 'loper': '__pow__', 'roper': '__pow__'}),
+                    '*' : _dict({'obj':operobj, 'rank':  4, 'reqs': ((2,), (0,)), 'loper': '__mul__', 'roper': '__mul__'}),
+                    '/' : _dict({'obj':operobj, 'rank':  4, 'reqs': ((2,), (0,)), 'loper': '__div__', 'roper': '__div__'}),
+                    '%' : _dict({'obj':operobj, 'rank':  4, 'reqs': ((2,), (0,)), 'loper': '__mod__', 'roper': '__mod__'}),
+                    '+' : _dict({'obj':operobj, 'rank':  5, 'reqs': ((2,), (0,)), 'loper': '__add__', 'roper': '__add__'}),
+                    '-' : _dict({'obj':operobj, 'rank':  5, 'reqs': ((2,), (0,)), 'loper': '__sub__', 'roper': '__sub__'}),
                 }),
 
                 'bitwise': _dict({
-                    '>>': _dict({'obj':operobj, 'rank':  6, 'reqs': ((2,), (0,))}),
-                    '<<': _dict({'obj':operobj, 'rank':  6, 'reqs': ((2,), (0,))}),
-                    '&' : _dict({'obj':operobj, 'rank':  7, 'reqs': ((2,), (0,))}),
-                    '^' : _dict({'obj':operobj, 'rank':  8, 'reqs': ((2,), (0,))}),
-                    '|' : _dict({'obj':operobj, 'rank':  9, 'reqs': ((2,), (0,))}),
+                    '>>': _dict({'obj':operobj, 'rank':  6, 'reqs': ((2,), (0,)), 'loper': '__rshift__', 'roper': '__rshift__'}),
+                    '<<': _dict({'obj':operobj, 'rank':  6, 'reqs': ((2,), (0,)), 'loper': '__lshift__', 'roper': '__lshift__'}),
+                    '&' : _dict({'obj':operobj, 'rank':  7, 'reqs': ((2,), (0,)), 'loper': '__and__', 'roper': '__and__'}),
+                    '^' : _dict({'obj':operobj, 'rank':  8, 'reqs': ((2,), (0,)), 'loper': '__xor__', 'roper': '__xor__'}),
+                    '|' : _dict({'obj':operobj, 'rank':  9, 'reqs': ((2,), (0,)), 'loper': '__or__', 'roper': '__or__'}),
                 }),
             }),
             'bitwise': _dict({
