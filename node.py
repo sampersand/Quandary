@@ -55,19 +55,18 @@ class node():
             o = os.pop()
             if __debug__:
                 assert isinstance(o.obj, objs.operobj), "Expected an operobj, not a '{}'".format(o.obj)
-            ts.append(o.obj.evalobj(knowns, gen, oper = o.data))
-            #-2 is because they need to be flipped
+            ts.append(o.obj.evaloper(ts, os, knowns, o.data))
+
         for t in gen:
-            print(ts, os)
-            if t.data in self.consts.parens:
-                if not self.consts.parens[t.data]:
+            if t.data in knowns.consts.parens:
+                if not knowns.consts.parens[t.data]:
                     ts.append(next(gen).evalnode(gen, knowns))
                 else:
                     while os:
                         reduce_os()
                     return ts.pop()
             elif isinstance(t.obj, objs.operobj):
-                while os and self.consts.operators[os[-1].data][1] <= self.consts.operators[t.data][1]:
+                while os and knowns.consts.operators[os[-1].data][1] <= knowns.consts.operators[t.data][1]:
                     reduce_os()
                 os.append(t)
             else:

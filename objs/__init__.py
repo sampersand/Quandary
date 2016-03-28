@@ -26,7 +26,6 @@ if '__init__' not in __name__: #aka, it's not being imported from NoneObj or the
         if data in node.consts.operators:
             return node.consts.operators[data][0]()
         for k, v in _regexes.items():
-            print(data, bool(k.fullmatch(data)) == bool(k.findall(data)), sep = ',::')
             if k.match(data):
                 return v()
         return varobj()
