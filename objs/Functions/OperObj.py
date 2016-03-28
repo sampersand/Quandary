@@ -1,5 +1,6 @@
 from typing import Callable
 from types import GeneratorType as gentype
+from node import node
 import copy
 varobj = __import__((__package__ + ' ')[:__package__.find('.')])._import('varobj')
 class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('funcobj')):
@@ -82,13 +83,37 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
         if ret == NotImplemented and oper == ';':
             ret = tstack.pop()
         if ret == NotImplemented and oper == '.':
-            quit(str(tstack) + str(ostack))
+            """ if len(ostack) - len(tstack) == 2: 'tstack[-2].tstack[-1]'
+                if len(ostack) - len(tstack) == 1: '0.tstack[-1]'
+                else: NotImplemented
+            """
+            if len(ostack) - len(tstack) == 2:
+
             left = tstack.pop(-2)
             right = tstack.pop()
             # if isinstance(left.obj, intobj) and isinstance(right.obj)
             print(tstack)
         #nothing else is defined yet
         return ret
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
