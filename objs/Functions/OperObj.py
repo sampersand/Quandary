@@ -1,5 +1,4 @@
-_super = 'FuncObj'; _init_file = __import__(__package__)
-class operobj(_init_file._import(_super, _init_file.__package__)):
+class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('funcobj')):
     """ An operator. """
     def evalobj(*args, **kwargs):
         if __debug__:

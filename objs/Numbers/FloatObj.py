@@ -1,4 +1,3 @@
-from objs import numobj
-class floatobj(numobj):
-    """ A floating poitn number. """
+class floatobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('numobj')):
+    """ A floating point number. """
     _regex = r'(\d+)?\.(?(1)\d*|\d+)[fF]?'

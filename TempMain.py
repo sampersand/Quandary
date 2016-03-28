@@ -1,3 +1,2 @@
 # from objs import obj
-import objs
-print(objs.__all__)
+from objs import boolobj
