@@ -1,18 +1,19 @@
+from typing import Callable
 import copy
 class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('funcobj')):
     """ An operator. """
-    def evalobj(knowns, *args, **kwargs):
+    def evalobj(knowns: 'knownsdict', gen: Callable, *args: (list, tuple), **kwargs: dict) -> 'node':
         if __debug__:
             assert 'oper' in kwargs, "Cannot evalobj on an operobj with no operator!"
-            assert len(args) == 2, "Currently, only accepting binary operators."
+            assert len(args) == 2, "currently, only accepting binary functions"
+            assert 'obj' in args[0], "Cannot evaluate a node with no object!"
         oper = kwargs['oper']
-        if __debug__: #this should be removed later when copy works
-            from node import node
-            ret = node(args[0].consts, **args[0]._attrs.copy())
-        # ret = copy.copy(args[0])
-        if oper == '+': ret.data = int(ret.data) + int(args[1].data)
-        if oper == '-': ret.data = int(ret.data) - int(args[1].data)
-        if oper == '/': ret.data = int(ret.data) / int(args[1].data)
-        if oper == '*': ret.data = int(ret.data) * int(args[1].data)
-        if oper == '%': ret.data = int(ret.data) % int(args[1].data)
+        base = args[0]
+        othr = args[1]
+        ret = getattr(base.obj, base.consts._loperfuncs[oper])(base, othr)
+        if ret == NotImplemented:
+            ret = getattr(othr.obj, base.consts._roperfuncs[oper])(base, base)
+            if ret == NotImplemented:
+                raise AttributeError("No known way to apply operator '{}' to objects '{}' and '{}'".format(\
+                    oper, base, othr))
         return ret

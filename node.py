@@ -55,7 +55,8 @@ class node():
             o = os.pop()
             if __debug__:
                 assert issubclass(o.obj, objs.operobj), "Expected an operobj, not a '{}'".format(o.obj)
-            ts.append(o.obj.evalobj(knowns, ts.pop(-2), ts.pop(), oper = o.data)) #-2 is because they need to be flipped
+            ts.append(o.obj.evalobj(knowns, gen, ts.pop(-2), ts.pop(), oper = o.data))
+            #-2 is because they need to be flipped
         for t in gen:
             if t.data in self.consts.parens:
                 if not self.consts.parens[t.data]:

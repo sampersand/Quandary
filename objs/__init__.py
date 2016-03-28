@@ -1,5 +1,5 @@
 import re, os
-__toimport__ = ('obj', 'nullobj', 'noneobj')
+__toimport__ = ('obj', 'nullobj', 'noneobj', 'pyobj')
 
 def _import(_obj: str) -> 'obj':
     return __import__(__package__, fromlist = _obj).__getattribute__(_obj)
