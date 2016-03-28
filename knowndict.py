@@ -52,11 +52,11 @@ class _dict(dict):
                 return v[item]
 
     def __getattr__(self: '_dict', attr: object) -> object:
-        return attr in self and self.__getitem__(attr) else super().__getattr__(attr)
+        return self.__getitem__(attr) if attr in self else super().__getattr__(attr)
     def __setattr__(self: '_dict', attr: object, val: object) -> None:
-        return attr in self and self.__setitem__(attr, val) else super().__setattr__(attr, val)
+        return self.__setitem__(attr, val) if attr in self else super().__setattr__(attr, val)
     def __delattr__(self: '_dict', attr: object) -> None:
-        return attr in self and self.__delitem__(attr) else super().__delattr__(attr)
+        return self.__delitem__(attr) if attr in self else super().__delattr__(attr)
 
     def __repr__(self: '_dict') -> str:
         return '_' + super().__repr__()
@@ -65,11 +65,12 @@ class _dict(dict):
         return '{' + ', '.join(str(k) +': ' + str(self[k]) for k in self) + '}'
 
     def __add__(self, other):
-        ret = self.copy()
+        ret = _dict(self.copy())
         ret.update(other)
         return ret
 
 class _control(_dict):
+    #TODO: marge this with _dict
     CONTROL_NAMES = {'last':'$', 'ret':'$ret', 'esc':'$esc'}
     def last():
         doc = "The last element evaluated."
