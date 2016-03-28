@@ -1,9 +1,15 @@
 from typing import Callable
+from types import GeneratorType as gentype
 import copy
 varobj = __import__((__package__ + ' ')[:__package__.find('.')])._import('varobj')
 class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('funcobj')):
     """ An operator. """
-    def evaloper(self: 'operobj', tstack: list, ostack: list, knowns: 'knownsdict', oper: str) -> 'node':
+    def evaloper(self: 'operobj',
+                 tstack: list,
+                 ostack: list,
+                 gen: gentype,
+                 knowns: 'knownsdict',
+                 oper: str) -> 'node':
         opers = knowns.consts.keywords.opers
         if __debug__:
             assert oper in opers, "Trying to evaloper with no operator!"
@@ -15,11 +21,15 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
 
         #first see if it's a simple operator
         if ret == NotImplemented and oper in opers['simple_binary']:
-            ret = self._evalsimple(tstack, ostack, knowns, oper)
+            ret = self._evalsimple(tstack, ostack, gen, knowns, oper)
 
-        #then see if it's an assignment
+        #second see if it's an assignment
         elif ret == NotImplemented and oper in opers['assignment']:
-            ret = self._evalassign(tstack, ostack, knowns, oper)
+            ret = self._evalassign(tstack, ostack, gen, knowns, oper)
+
+        #third, see if it's a deliminator
+        elif ret == NotImplemented and oper in opers['delims']:
+            ret = self._evaldelim(tstack, ostack, gen, knowns, oper)
 
         #lastly, throw an exception
         if ret == NotImplemented:
@@ -28,21 +38,30 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
         return ret
 
 
-    def _evalsimple(self: 'operobj', tstack: list, ostack: list, knowns: 'knownsdict', oper: str) -> 'node':
+    def _evalsimple(self: 'operobj',
+                    tstack: list,
+                    ostack: list,
+                    gen: gentype,
+                    knowns: 'knownsdict',
+                    oper: str) -> ('node', NotImplemented):
         ret = NotImplemented
-        #first, try 'a.__OPER__.(b)'
         left = tstack.pop(-2)
         right = tstack.pop()
-        if ret == NotImplemented and hasattr(left.obj, left.consts._loperfuncs[oper]): # if raises KeyError, its b/c
-                                                                             # oper isn't recognized
+        #first, try 'a.__OPER__.(b)'
+        if ret == NotImplemented and hasattr(left.obj, left.consts._loperfuncs[oper]): # KeyError: oper isnt recognized
             ret = getattr(left.obj, left.consts._loperfuncs[oper])(left, right)
         
         #second, try 'b.__iOPER__.(a)'
-        if ret == NotImplemented and hasattr(right.obj, left.consts._roperfuncs[oper]): # KeyError = oper isnt recognized
+        if ret == NotImplemented and hasattr(right.obj, left.consts._roperfuncs[oper]): # KeyError: oper isnt recognized
             ret = getattr(right.obj, left.consts._roperfuncs[oper])(right, left)
         return ret
 
-    def _evalassign(self: 'operobj', tstack: list, ostack: list, knowns: 'knownsdict', oper: str) -> 'node':
+    def _evalassign(self: 'operobj',
+                    tstack: list,
+                    ostack: list,
+                    gen: gentype,
+                    knowns: 'knownsdict',
+                    oper: str) -> ('node', NotImplemented):
         direc = oper == '->'
         left = tstack.pop(-1 -direc) #if direc is 1, pop second to last.
         right = tstack.pop()
@@ -52,6 +71,18 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
                                                                        # nothing more complex than that
         knowns[right.data] = left
         return knowns[right.data]
+
+    def _evaldelim(self: 'operobj',
+                   tstack: list,
+                   ostack: list,
+                   gen: gentype,
+                   knowns: 'knownsdict',
+                   oper: str) -> ('node', NotImplemented):
+        ret = NotImplemented
+        if ret == NotImplemented and oper == ';':
+            ret = tstack.pop()
+        #nothing else is defined yet
+        return ret
 
 
 

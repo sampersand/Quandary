@@ -53,10 +53,9 @@ class node():
     def evalnode(gen: gentype, knowns: 'knowndict') -> 'node':
         ts, os = [], [] #token / oper stack
         def reduce_os():
-            o = os.pop()
             if __debug__:
-                assert isinstance(o.obj, objs.operobj), "Expected an operobj, not a '{}'".format(o.obj)
-            ts.append(o.obj.evaloper(ts, os, knowns, o.data))
+                assert isinstance(os[-1].obj, objs.operobj), "Expected an operobj, not a '{}'".format(o.obj)
+            ts.append(os[-1].obj.evaloper(ts, os, gen, knowns, os.pop().data))
 
         for t in gen:
             if t.data in knowns.consts.punc.parens:
