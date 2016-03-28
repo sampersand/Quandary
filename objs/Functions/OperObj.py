@@ -12,7 +12,8 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
         left, rght = args
         ret = NotImplemented
 
-        if left._isassign
+        if oper in left.consts.operators['assignment']:
+            quit()
 
         #first, try 'a.__OPER__.(b)'
         if hasattr(left.obj, left.consts._loperfuncs[oper]): #if this rasies a KeyError, its b/c oper isn't recognized

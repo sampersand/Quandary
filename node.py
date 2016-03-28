@@ -66,7 +66,7 @@ class node():
                         reduce_os()
                     return ts.pop()
             elif isinstance(t.obj, objs.operobj):
-                while os and self.consts._evalorder(os[-1].data) <= self.consts._evalorder(t.data):
+                while os and self.consts.operators[os[-1].data][1] <= self.consts.operators[t.data][1]:
                     reduce_os()
                 os.append(t)
             else:
