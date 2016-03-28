@@ -1,6 +1,6 @@
 from typing import Callable
 import copy
-noneobj = __import__((__package__ + ' ')[:__package__.find('.')])._import('noneobj')
+varobj = __import__((__package__ + ' ')[:__package__.find('.')])._import('varobj')
 class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('funcobj')):
     """ An operator. """
     def evalobj(self: 'operobj', knowns: 'knownsdict', gen: Callable, *args: (list, tuple), **kwargs: dict) -> 'node':
@@ -39,7 +39,7 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
         left = args[not direc]
         rght = args[direc]
         if __debug__:
-            assert type(rght.obj) == noneobj, "Not able to assignment a value to the non-basic object '{}'".\
+            assert type(rght.obj) == varobj, "Not able to assignment a value to the non-basic object '{}'".\
                 format(rght.obj)
             assert list(sorted(rght.attrs.keys())) == ['data', 'obj'] #can only be data and object,
                                                                        # nothing more complex than that

@@ -55,7 +55,7 @@ class node():
             o = os.pop()
             if __debug__:
                 assert isinstance(o.obj, objs.operobj), "Expected an operobj, not a '{}'".format(o.obj)
-            ts.append(o.obj.evalobj(knowns, gen, ts.pop(-2), ts.pop(), oper = o.data))
+            ts.append(o.obj.evalobj(knowns, gen, oper = o.data))
             #-2 is because they need to be flipped
         for t in gen:
             print(ts, os)
@@ -74,7 +74,6 @@ class node():
                 ts.append(t)
         while os:
             reduce_os()
-        print(ts, os, '@')
         return ts.pop()
 
 def getiter(consts: 'constants', iterable: Callable) -> node:

@@ -1,5 +1,5 @@
 import re, os
-__toimport__ = ('obj', 'nullobj', 'noneobj', 'pyobj')
+__toimport__ = ('obj', 'nullobj', 'varobj', 'pyobj')
 
 def _import(_obj: str) -> 'obj':
     return __import__(__package__, fromlist = _obj).__getattribute__(_obj)
@@ -20,14 +20,15 @@ if '__init__' not in __name__: #aka, it's not being imported from NoneObj or the
 
     def getobj(node: 'node', data: (str, None)) -> obj:
         if data == None:
-            return noneobj()
+            return varobj()
         if data == '':
             return nullobj()
         if data in node.consts.operators:
             return node.consts.operators[data][0]()
         for k, v in _regexes.items():
-            if k.findall(data):
+            print(data, bool(k.fullmatch(data)) == bool(k.findall(data)), sep = ',::')
+            if k.match(data):
                 return v()
-        return noneobj()
+        return varobj()
 # g=[__import__('random').randint(1,100)]
 # while g.append(int(input()))or g[-1]!=g[0]:print(g[-1]<g[0],len(g))
