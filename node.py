@@ -58,8 +58,8 @@ class node():
             ts.append(o.obj.evaloper(ts, os, knowns, o.data))
 
         for t in gen:
-            if t.data in knowns.consts.parens:
-                if not knowns.consts.parens[t.data]:
+            if t.data in knowns.consts.punc.parens:
+                if not knowns.consts.punc.parens[t.data]:
                     ts.append(next(gen).evalnode(gen, knowns))
                 else:
                     while os:
@@ -83,13 +83,13 @@ def getiter(consts: 'constants', iterable: Callable) -> node:
     def iesc(_iterable: gentype):
         """ yields each individual character, or two if the first one is a '\\'. """
         for c in _iterable:
-            yield c + ('' if c not in consts.escape else next(_iterable))
+            yield c + ('' if c not in consts.punc.escape else next(_iterable))
 
     def itoken(_iterable: gentype):
         """ yields each individual token. """
         last = ''
         for c in _iterable:
-            if c in consts.quotes:
+            if c in consts.punc.quotes:
                 toyield = [c]
                 try:
                     toyield.append(next(_iterable))
@@ -109,10 +109,10 @@ def getiter(consts: 'constants', iterable: Callable) -> node:
         """ skips over comments. """
         i = iter(_iterable)
         for t in i:
-            if t in consts.comment:
+            if t in consts.punc.comment:
                 try:
                     t = next(i)
-                    while t not in consts.endcomment:
+                    while t not in consts.punc.endcomment:
                         t = next(i)
                     t = next(i) #else you get stuck with the '#'
                 except StopIteration:
@@ -121,7 +121,7 @@ def getiter(consts: 'constants', iterable: Callable) -> node:
 
     def iws(_iterable: gentype):
         """ yields each token if it isn't only a whitespace token. """
-        return (t for t in _iterable if t not in consts.whitespace)
+        return (t for t in _iterable if t not in consts.punc.whitespace)
 
     def ieof(_iterable: gentype):
         """ yields each t before and '@eof', if it exists. """
