@@ -6,7 +6,6 @@ if __name__ == '__main__':
     n = node(constants())
     with open('qfiles/testcode.qq') as f:
         gen = getiter(n.consts, f.read())
-    quit(list(gen))
     known = knowndict(n.consts)
     print('----')
     print(n.evalnode(gen, known))

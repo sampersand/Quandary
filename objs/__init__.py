@@ -28,6 +28,6 @@ if '__init__' not in __name__: #aka, it's not being imported from NoneObj or the
         for k, v in _regexes.items():
             if k.findall(data):
                 return v()
-        return nullobj()
+        return noneobj()
 # g=[__import__('random').randint(1,100)]
 # while g.append(int(input()))or g[-1]!=g[0]:print(g[-1]<g[0],len(g))

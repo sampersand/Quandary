@@ -74,6 +74,7 @@ class node():
                 ts.append(t)
         while os:
             reduce_os()
+        print(ts, os, '@')
         return ts.pop()
 
 def getiter(consts: 'constants', iterable: Callable) -> node:

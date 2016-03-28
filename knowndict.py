@@ -55,17 +55,28 @@ class _dict(dict):
         return '_' + super().__repr__()
     def __str__(self):
         return '{' + ', '.join(str(k) +': ' + str(self[k]) for k in self) + '}'
+class _control(_dict):
+    CONTROL_NAMES = {'last':'$', 'ret':'$ret', 'esc':'$esc'}
+    def last():
+        doc = "The last element evaluated."
+        def fget(self: '_control') -> 'node':
+            return self[self.CONTROL_NAMES['last']]
+        def fset(self: '_control', value: 'node') -> None:
+            self[self.CONTROL_NAMES['last']] = value
+        def fdel(self: '_control') -> None:
+            del self[self.CONTROL_NAMES['last']]
+        return locals()
+    last = property(**last())
 
 class knowndict(_dict):
     """ The object that keeps tracks of all the currently known variables. """
 
     SCOPE_NAMES = {'global':'_$g', 'local': '_$l', 'control': '_$i'}
-    CONTROL_NAMES = {'last':'$', 'ret':'$ret', 'esc':'$esc'}
     def __init__(self: 'knowndict', consts: 'constants', args: dict = None) -> None:
         super().__init__(args or {})
         self.consts = consts
         self.g, self.l = _dict(), _dict()
-        self.c = _dict()
+        self.c = _control()
 
     def g():
         doc = "The known global variables"
@@ -81,7 +92,7 @@ class knowndict(_dict):
     def c():
         doc = "The known control variables"
         def fget(self: 'knowndict') -> 'node':
-            return self[self.SCOPE_NAMES['control']]
+            return self.l[self.SCOPE_NAMES['control']]
         def fset(self: 'knowndict', value: 'node') -> None:
             self.l[self.SCOPE_NAMES['control']] = value
         def fdel(self: 'knowndict') -> None:
@@ -100,6 +111,13 @@ class knowndict(_dict):
         return locals()
     l = property(**l())
 
+    def __setitem__(self: '_dict', item: str, val: str) -> None:
+        ret = super().__setitem__(item, val)
+        self.c.last = item
+        return ret
+        # for k, v in self.flatpair:
+        #     if k == item:
+        #         return v
 
 
 
