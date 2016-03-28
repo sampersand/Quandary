@@ -1,1 +1,3 @@
-from objs import obj
+# from objs import obj
+import objs
+print(objs.__all__)

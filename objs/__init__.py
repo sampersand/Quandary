@@ -5,8 +5,8 @@ def _import_file(_obj, _path):
 def _import(_obj):
     return __import__(__package__, fromlist = _obj).__getattribute__(_obj)
 
-import os
-if '__init__' not in __name__:
+if '__init__' not in __name__: #aka, it's not being imported from NoneObj or the ilk
+    import os
     for _dir in os.walk('./' + __package__.replace('.', '/')):
         if _dir[0] != './objs':
             continue
@@ -15,6 +15,8 @@ if '__init__' not in __name__:
             if __debug__:
                 assert '__toimport__' in dir(module), "Error! '{}/__init__.py' doesn't have an import list!".format(_dir[0])
             for _obj in module.__toimport__:
+                print([x for x in locals().keys() if x[0] != '_'], 'b4')
                 locals()[_obj.lower()] = _import_file(_obj, module.__package__)
-    del os, _dir, module
-print(locals().keys())
+                print([x for x in locals().keys() if x[0] != '_'], 'l8')
+    del os, _dir, module, _obj
+    __all__ = [o for o in locals().keys() if 'bj' in o]
