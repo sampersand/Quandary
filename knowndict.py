@@ -1,7 +1,6 @@
-from node import node
 from typing import Union
 from types import GeneratorType as gentype
-
+from constants import _set
 class _dict(dict):
     """
         A dicitonary that uses all of it's elements.
@@ -26,9 +25,12 @@ class _dict(dict):
         """ A generator that yields a tuple of (key, value) from each elementin this and each subdict. """
         for k in self:
             v = super().__getitem__(k)
-            if isinstance(v, _dict) and v:
+            if isinstance(v, _dict):
                 for n in v.flatpair:
                     yield n
+            if isinstance(v, _set):
+                for n in v:
+                    yield n, k
             yield k, v
         
     def __contains__(self: '_dict', item: object) -> bool:
@@ -70,7 +72,8 @@ class _dict(dict):
         ret = _dict(self.copy())
         ret.update(other)
         return ret
-
+    def copy(self: '_dict') -> '_dict':
+        return _dict(super().copy())
 class _control(_dict):
     #TODO: marge this with _dict
     CONTROL_NAMES = {'last':'$', 'ret':'$ret', 'esc':'$esc'}

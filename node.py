@@ -77,7 +77,9 @@ class node():
 
 def getiter(consts: 'constants', iterable: Callable) -> node:
     """ get an iterable, where each successive element is a node."""
-    kws = consts.keywords
+    kws = consts.keywords.copy()
+    kws['ws'] = consts.punc.whitespace
+    # print(kws.keys())
     if __debug__:
         assert hasattr(iterable, '__iter__'), 'cannot run getiter on a non-iterable...'
     def iesc(_iterable: gentype):
@@ -99,7 +101,8 @@ def getiter(consts: 'constants', iterable: Callable) -> node:
                     continue
                 except StopIteration:
                     raise SyntaxError('Error: Unclosed string literal!')
-            if ((last in kws) and (last + c not in kws)) or (c in kws and last not in kws):
+            elif ((last in kws) and (last + c not in kws)) or\
+                    (c in kws and last not in kws):
                 if last: yield last
                 last = ''
             last += c
@@ -121,6 +124,7 @@ def getiter(consts: 'constants', iterable: Callable) -> node:
 
     def iws(_iterable: gentype):
         """ yields each token if it isn't only a whitespace token. """
+        quit(list(_iterable))
         return (t for t in _iterable if t not in consts.punc.whitespace)
 
     def ieof(_iterable: gentype):
