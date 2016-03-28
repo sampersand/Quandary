@@ -3,9 +3,18 @@ from decimal import Decimal
 from typing import Callable
 from types import GeneratorType as gentype
 from node import node
-varobj = __import__((__package__ + ' ')[:__package__.find('.')])._import('varobj')
-class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('funcobj')):
+from objs import varobj, funcobj
+class operobj(funcobj):
     """ An operator. """
+    @staticmethod
+    def _pop(tstack, knowns, pos = -1, dothrow = True):
+        ret = tstack.pop(pos)
+        if isinstance(ret.obj, varobj):
+            if ret.data in knowns: #doesn't check for anything else
+                return knowns[ret.data]
+            elif dothrow:
+                raise SyntaxError("Unknown variable '{}'!".format(ret.data))
+        return ret
     def evaloper(self: 'operobj',
                  tstack: list,
                  ostack: list,
@@ -47,8 +56,8 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
                     knowns: 'knownsdict',
                     oper: str) -> ('node', NotImplemented):
         ret = NotImplemented
-        left = tstack.pop(-2)
-        right = tstack.pop()
+        left = self._pop(tstack, knowns, -2)
+        right = self._pop(tstack, knowns)
         #first, try 'a.__OPER__.(b)'
         if ret == NotImplemented and hasattr(left.obj, left.consts._loperfuncs[oper]): # KeyError: oper isnt recognized
             ret = getattr(left.obj, left.consts._loperfuncs[oper])(left, right)
@@ -65,8 +74,8 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
                     knowns: 'knownsdict',
                     oper: str) -> ('node', NotImplemented):
         direc = oper == '->'
-        left = tstack.pop(-1 -direc) #if direc is 1, pop second to last.
-        right = tstack.pop()
+        left = self._pop(tstack, knowns, -1 -direc) #if direc is 1, pop second to last.
+        right = self._pop(tstack, knowns, dothrow = False)
         if __debug__:
             assert type(right.obj) == varobj, "Not able to assignment a value to the non-var obj '{}'".format(right.obj)
             assert list(sorted(right.attrs.keys())) == ['data', 'obj'] #can only be data and object,
@@ -83,7 +92,7 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
         ret = NotImplemented
 
         if ret == NotImplemented and oper == ';':
-            ret = tstack.pop()
+            ret = self._pop(tstack, knowns)
 
         if ret == NotImplemented and oper == '.':
             """ if len(ostack) - len(tstack) == 2: 'tstack[-2].tstack[-1]'
@@ -91,9 +100,11 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
                 else: NotImplemented
             """
             if ret == NotImplemented and (len(tstack) - len(ostack)) == 1:
-                ret = node(knowns.consts, data = str('0.'+tstack.pop().data), genobj = True)
+                ret = node(knowns.consts, data = str('0.'+self._pop(tstack, knowns).data), genobj = True)
             if ret == NotImplemented and (len(tstack) - len(ostack)) == 2:
-                ret = node(knowns.consts, data = str(tstack.pop(-2).data + '.' + tstack.pop().data), genobj = True)
+                ret = node(knowns.consts,
+                           data = str(self._pop(tstack, knowns, -2).data + '.' + self._pop(tstack, knowns).data),
+                           genobj = True)
         
         return ret
 

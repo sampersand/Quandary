@@ -1,5 +1,6 @@
 from node import node
-class pyobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('obj')):
+from objs import obj
+class pyobj(obj):
     """ The superclass for all Quandary objects that are linked to python objects (_pyobj) """
     def __getattr__(self, attr: str):
         def ret(node1: 'node', node2: 'node') -> 'node':

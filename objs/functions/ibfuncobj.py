@@ -1,2 +1,3 @@
-class ibfuncobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('funcobj')):
+from objs import funcobj
+class ibfuncobj(funcobj):
     """ An inbuilt function. """

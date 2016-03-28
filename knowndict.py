@@ -137,9 +137,11 @@ class knowndict(_dict):
         return locals()
     l = property(**l())
 
-    def __setitem__(self: '_dict', item: object, val: 'node') -> None:
+    def __setitem__(self: 'knowndict', item: object, val: 'node') -> None:
         #TODO: make it so when you set an item, and it exists further down, it sets it there instead.
         ret = super().__setitem__(item, val)
         if item[:2] != '_$':
             self.c.last = val
         return ret
+    def __str__(self: 'knowndict') -> None:
+        return '{' + ', '.join(str(k) + ': ' + str(v) for k,v in self.flatpair if not isinstance(v, _dict)) + '}'
