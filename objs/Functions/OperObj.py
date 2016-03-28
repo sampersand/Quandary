@@ -5,15 +5,15 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
     """ An operator. """
     def evaloper(self: 'operobj', tstack: list, ostack: list, knowns: 'knownsdict', oper: str) -> 'node':
         if __debug__:
-            assert oper in knowns.consts.keywords.operators, "Trying to evaloper with no operator!"
-            oper_tuple = knowns.consts.keywords.operators[oper]
+            assert oper in knowns.consts.keywords.opers, "Trying to evaloper with no operator!"
+            oper_tuple = knowns.consts.keywords.opers[oper]
             assert len(tstack) >= oper_tuple[]
-        if oper in knowns.consts.operators['assignment']:
+        if oper in knowns.consts.opers['assignment']:
             pass
     #     args = [next(gen) for x in range(base.)]
     #     ret = NotImplemented
 
-    #     if oper in left.consts.operators['assignment']:
+    #     if oper in left.consts.opers['assignment']:
     #         ret = self._evaloper(knowns, gen, *args, **kwargs)
 
 
