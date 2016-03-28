@@ -58,6 +58,7 @@ class node():
             ts.append(o.obj.evalobj(knowns, gen, ts.pop(-2), ts.pop(), oper = o.data))
             #-2 is because they need to be flipped
         for t in gen:
+            print(ts, os)
             if t.data in self.consts.parens:
                 if not self.consts.parens[t.data]:
                     ts.append(next(gen).evalnode(gen, knowns))
@@ -130,7 +131,4 @@ def getiter(consts: 'constants', iterable: Callable) -> node:
             yield t
     def iopers(_iterable: gentype):
         return (node(consts, data = x, genobj = True) for x in _iterable)
-
-    yield node(consts)
-    for t in iopers(ieof(iws(icmnt(itoken(iesc(iter(iterable))))))):
-        yield t
+    return iopers(ieof(iws(icmnt(itoken(iesc(iter(iterable)))))))

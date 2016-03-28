@@ -1,11 +1,12 @@
 from constants import constants
-from node import getiter
+from node import node, getiter
 from knowndict import knowndict
 
 if __name__ == '__main__':
+    n = node(constants())
     with open('qfiles/testcode.qq') as f:
-        gen = getiter(constants(), f.read())
-    n = next(gen)
+        gen = getiter(n.consts, f.read())
+    quit(list(gen))
     known = knowndict(n.consts)
     print('----')
     print(n.evalnode(gen, known))
