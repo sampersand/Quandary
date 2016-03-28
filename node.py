@@ -126,6 +126,7 @@ def getiter(consts: 'constants', iterable: Callable) -> node:
     def ieof(_iterable: gentype):
         """ yields each t before and '@eof', if it exists. """
         for t in _iterable:
+            print(t)
             if t == '@eof': break
             yield t
     def iopers(_iterable: gentype):
