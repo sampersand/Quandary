@@ -18,3 +18,4 @@ if '__init__' not in __name__: #aka, it's not being imported from NoneObj or the
                                          __getattribute__(_obj.lower())
     del os, _dir, module, _obj
     __all__ = [o for o in locals().keys() if 'obj' in o]
+    
