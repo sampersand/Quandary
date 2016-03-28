@@ -66,7 +66,7 @@ class node():
                         reduce_os()
                     return ts.pop()
             elif isinstance(t.obj, objs.operobj):
-                while os and knowns.consts.opers[os[-1].data]['priority'] <= knowns.consts.opers[t.data]['priority']:
+                while os and knowns.consts.opers[os[-1].data]['rank'] <= knowns.consts.opers[t.data]['rank']:
                     reduce_os()
                 os.append(t)
             else:
@@ -77,7 +77,7 @@ class node():
 
 def getiter(consts: 'constants', iterable: Callable) -> node:
     """ get an iterable, where each successive element is a node."""
-    punc = consts.punctuation
+    kws = consts.keywords
     if __debug__:
         assert hasattr(iterable, '__iter__'), 'cannot run getiter on a non-iterable...'
     def iesc(_iterable: gentype):
@@ -99,7 +99,7 @@ def getiter(consts: 'constants', iterable: Callable) -> node:
                     continue
                 except StopIteration:
                     raise SyntaxError('Error: Unclosed string literal!')
-            if ((last in punc) and (last + c not in punc)) or (c in punc and last not in punc):
+            if ((last in kws) and (last + c not in kws)) or (c in kws and last not in kws):
                 if last: yield last
                 last = ''
             last += c

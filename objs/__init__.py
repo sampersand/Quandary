@@ -24,7 +24,7 @@ if '__init__' not in __name__: #aka, it's not being imported from NoneObj or the
         if data == '':
             return nullobj()
         if data in node.consts.opers:
-            return node.consts.opers[data][0]()
+            return node.consts.opers[data]['object']()
         for k, v in _regexes.items():
             if k.match(data):
                 return v()

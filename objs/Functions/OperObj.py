@@ -6,8 +6,10 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
     def evaloper(self: 'operobj', tstack: list, ostack: list, knowns: 'knownsdict', oper: str) -> 'node':
         if __debug__:
             assert oper in knowns.consts.keywords.opers, "Trying to evaloper with no operator!"
-            oper_tuple = knowns.consts.keywords.opers[oper]
-            assert len(tstack) >= oper_tuple[]
+            reqs = knowns.consts.keywords.opers[oper]['requirements']
+            assert len(tstack) >= reqs[0]
+            assert len(tstack) >= reqs[1]
+            del reqs
         if oper in knowns.consts.opers['assignment']:
             pass
     #     args = [next(gen) for x in range(base.)]
