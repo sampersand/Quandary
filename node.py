@@ -54,7 +54,7 @@ class node():
         def reduce_os():
             o = os.pop()
             if __debug__:
-                assert issubclass(o.obj, objs.operobj), "Expected an operobj, not a '{}'".format(o.obj)
+                assert isinstance(o.obj, objs.operobj), "Expected an operobj, not a '{}'".format(o.obj)
             ts.append(o.obj.evalobj(knowns, gen, ts.pop(-2), ts.pop(), oper = o.data))
             #-2 is because they need to be flipped
         for t in gen:
@@ -65,7 +65,7 @@ class node():
                     while os:
                         reduce_os()
                     return ts.pop()
-            elif issubclass(t.obj, objs.operobj):
+            elif isinstance(t.obj, objs.operobj):
                 while os and self.consts._evalorder(os[-1].data) <= self.consts._evalorder(t.data):
                     reduce_os()
                 os.append(t)

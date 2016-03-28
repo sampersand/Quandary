@@ -8,5 +8,6 @@ class pyobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('obj
                 assert hasattr(node1.obj, '_pyobj'), "The Node's object should have a python object associated with it!"
             pyobj = node1.obj._pyobj
             return node(node1.consts, data = getattr(pyobj(node1.data), attr)(pyobj(node2.data)), obj = node1.obj)
+        return ret
     # def __add__(self, a, b):
         # ret = 
