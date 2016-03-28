@@ -49,7 +49,8 @@ class node():
     def __deepcopy__(self, memo):
         return node(self.consts, deepcopy(self._attrs, memo))
 
-    def evalnode(self: 'node', gen: gentype, knowns: 'knowndict') -> 'node':
+    @staticmethod
+    def evalnode(gen: gentype, knowns: 'knowndict') -> 'node':
         ts, os = [], [] #token / oper stack
         def reduce_os():
             o = os.pop()
@@ -60,7 +61,7 @@ class node():
         for t in gen:
             if t.data in knowns.consts.punc.parens:
                 if not knowns.consts.punc.parens[t.data]:
-                    ts.append(next(gen).evalnode(gen, knowns))
+                    ts.append(node.evalnode(gen, knowns))
                 else:
                     while os:
                         reduce_os()
