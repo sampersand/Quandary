@@ -8,8 +8,8 @@ class operobj(__import__((__package__ + ' ')[:__package__.find('.')])._import('f
         if __debug__:
             assert oper in opers, "Trying to evaloper with no operator!"
             reqs = opers[oper]['reqs']
-            assert len(tstack) >= reqs[0], "Too few tokens ({}) to perform {} ({})".format(tstack, oper, reqs[0])
-            assert len(ostack) >= reqs[1], "Too few opers ({}) to perform {} ({})".format(ostack, oper, reqs[1])
+            assert len(tstack) >= reqs[0], "Too few tokens {} to perform '{}' ({})".format(tstack, oper, reqs[0])
+            assert len(ostack) >= reqs[1], "Too few opers {} to perform '{}' ({})".format(ostack, oper, reqs[1])
             del reqs
         ret = NotImplemented
 
