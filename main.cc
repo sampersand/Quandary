@@ -1,9 +1,9 @@
-#include "constants.cc"
+#include "consts.cc"
 #include <iostream>
 int main(int argc, char const *argv[])
 {
     /* code */
-    constants* c = new constants();
-    std::cout << c->a;
+
+    std::cout << consts::punc::comment[0];
     return 0;
 }
