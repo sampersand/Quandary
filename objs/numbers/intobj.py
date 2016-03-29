@@ -13,5 +13,6 @@ class intobj(pyobj, numobj):
         if __debug__:
             assert hasattr(right.obj, '_pyobj'), "Cannot divide an '{}' by a non-simple type '{}'".format(left.obj,
                                                                                                           right.obj)
-        result = left.obj._pyobj(left.obj) / right.obj._pyobj(right.obj)
+        result = left.obj._pyobj(left.data) / right.obj._pyobj(right.data)
+        result = int(result) if float(result) == int(result) else float(result)
         return left.new(data = str(result), obj = isinstance(result, int) and intobj or floatobj)
