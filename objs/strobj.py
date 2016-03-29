@@ -4,11 +4,23 @@ class strobj(pyobj, obj):
     _regex = r'["\'].*["\']'
     _pyobj = str
     _pyobj_rank = 4
+    @staticmethod
+    def _isquotedstr(s: str, consts: 'constants'):
+        return s[0] in consts.punc.quotes and s[-1] in consts.punc.quotes
     def __add__(self, left, right, knowndict):
-        ldata, rdata = str(left.data), str(right.data)
-        if ldata[-1] in knowndict.consts.punc.quotes:
-            data = ldata[:-1] + rdata + ldata[-1]
+        """ 
+            if l is quoted and r is quoted, use l's quotes.
+            if one and not the other is quoted, use that one's quotes
+            if neither are quoted, use no quotes
+            """
+        lstr, rstr = str(left.data), str(right.data)
+        lisq, risq = self._isquotedstr(lstr, knowndict.consts), self._isquotedstr(rstr, knowndict.consts)
+        print(lstr, lisq, rstr, risq)
+        if lisq:
+            data = lstr[:-1] + (rstr[1:-1] if risq else rstr) + lstr[-1]
+        elif risq:
+            data = rstr[0] + lstr + rstr[1:]
         else:
-            data = ldata + rdata
+            data = lstr + rstr
         return left.new(data = data, obj = strobj)
         # if args[0][-1] in args[0].control
