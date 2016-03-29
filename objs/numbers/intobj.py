@@ -16,3 +16,6 @@ class intobj(pyobj, numobj):
         result = left.obj._pyobj(left.data) / right.obj._pyobj(right.data)
         result = int(result) if float(result) == int(result) else float(result)
         return left.new(data = str(result), obj = isinstance(result, int) and intobj or floatobj)
+    @staticmethod
+    def _genfromstr(data):
+        return data[0:data[-1] in 'wW' and -1 or None], floatobj()
