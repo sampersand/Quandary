@@ -7,6 +7,10 @@ class obj():
         return type(self).__qualname__+'({})'.\
             format(kwargs and ', '.join(str(k) + ' = ' + str(v) for k,v in kwargs.items()) or '')
 
+    def isreference(self: 'obj') -> bool:
+        """ True if this class is a reference to another object. Currently, only varobj returns true."""
+        return False
+
     @classmethod
     def fromstr(self: type, data: str, consts: 'constants') -> ((str, 'obj'), None):
         return None

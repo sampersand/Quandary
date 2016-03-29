@@ -9,7 +9,7 @@ class operobj(funcobj):
     @staticmethod
     def _pop(tstack, knowns, pos = -1, dothrow = True):
         ret = tstack.pop(pos)
-        if isinstance(ret.obj, varobj):
+        if ret.obj.isreference():
             if ret.data in knowns: #doesn't check for anything else
                 return knowns[ret.data]
             elif dothrow:
@@ -21,8 +21,10 @@ class operobj(funcobj):
                  ostack: list,
                  gen: gentype,
                  knowns: 'knownsdict',
-                 oper: str) -> 'node':
-        opers = knowns.consts.keywords.opers
+                 oper: str,
+                 opers = None) -> 'node':
+        """ if opers are none, use knowns.consts.keywords.opers"""
+        opers = opers or knowns.consts.keywords.opers
         if __debug__:
             assert oper in opers, "Trying to evaloper with no operator!"
             reqs = opers[oper]['reqs']

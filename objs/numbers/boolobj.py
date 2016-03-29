@@ -1,6 +1,7 @@
 from objs import intobj, pyobj
 class boolobj(intobj, pyobj):
     """ A boolean - either True or False. """
+    BASES = {'default': 2}
     def __init__(self):
         super().__init__(base = 2)
     _regex = r'\b([Tt]rue|[Ff]alse)\b'

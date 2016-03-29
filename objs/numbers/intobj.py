@@ -16,9 +16,9 @@ class intobj(regexobj, pyobj, numobj):
     _pyobj = int
     _pyobj_rank = 1
 
-    def __init__(self: 'intobj', base = BASES['default']) -> None:
+    def __init__(self: 'intobj', base = None) -> None:
         super().__init__()
-        self.base = base
+        self.base = base or self.BASES['default']
 
     def __repr__(self: 'intobj') -> str:
         return super().__repr__(base = self.base) 
@@ -38,40 +38,13 @@ class intobj(regexobj, pyobj, numobj):
         result = left.obj._pyobj_valof(left) / right.obj._pyobj_valof(right)
         result = int(result) if float(result) == int(result) else float(result)
         return left.new(data = str(result), obj = isinstance(result, int) and intobj or floatobj)
-
-    # @classmethod
-    # def fromstr(self: type, data: str, consts: 'constants') -> 'obj':
-    #     return data[0:data[-1] in 'wW' and -1 or None],\
-    #         intobj(intobj.BASES[data[:2]] if len(data) > 1 and data[:2] in intobj.BASES else intobj.BASES['default'])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @classmethod
+    def fromstr(self: type, data: str, consts: 'constants') -> ((str, 'regexobj'), None):
+        ret = super().fromstr(data, consts)
+        if ret == None:
+            return ret
+        base = self.BASES['default']
+        if len(ret) > 1 and ret[0][:2] in self.BASES:
+            base = self.BASES[ret[0][:2]]
+        print(ret[0], self.BASES, base, self, )
+        return ret[0], intobj(base = base)
