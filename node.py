@@ -82,7 +82,6 @@ def getiter(consts: 'constants', iterable: Callable) -> node:
     """ get an iterable, where each successive element is a node."""
     kws = consts.keywords.copy()
     kws['ws'] = consts.punc.whitespace
-    # print(kws.keys())
     if __debug__:
         assert hasattr(iterable, '__iter__'), 'cannot run getiter on a non-iterable...'
     def iesc(_iterable: gentype):

@@ -18,7 +18,6 @@ class strobj(pyobj, obj):
             """
         lstr, rstr = str(left.data), str(right.data)
         lisq, risq = self._isquotedstr(lstr, knowndict.consts), self._isquotedstr(rstr, knowndict.consts)
-        print(lstr, lisq, rstr, risq)
         if lisq:
             data = lstr[:-1] + (rstr[1:-1] if risq else rstr) + lstr[-1]
         elif risq:
