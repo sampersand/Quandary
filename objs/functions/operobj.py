@@ -75,8 +75,8 @@ class operobj(funcobj):
                     knowns: 'knownsdict',
                     oper: str) -> ('node', NotImplemented):
         direc = oper == '->'
-        left = self._pop(tstack, knowns, -1 -direc) #if direc is 1, pop second to last.
-        right = self._pop(tstack, knowns, dothrow = False)
+        left = tstack.pop(-1 -direc) #if direc is 1, pop second to last.
+        right = tstack.pop()
         if __debug__:
             assert type(right.obj) == varobj, "Not able to assignment a value to the non-var obj '{}'".format(right.obj)
             assert list(sorted(right.attrs.keys())) == ['data', 'obj'] #can only be data and object,
