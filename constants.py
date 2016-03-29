@@ -33,20 +33,20 @@ class constants():
             }),
             'simple_binary': flatdict({
                 'math': flatdict({
-                    '**': flatdict({'obj':operobj, 'rank':  3, 'reqs': ((2,), (0,)), 'loper': '__pow__', 'roper': '__ipow__'}),
-                    '*' : flatdict({'obj':operobj, 'rank':  4, 'reqs': ((2,), (0,)), 'loper': '__mul__', 'roper': '__imul__'}),
-                    '/' : flatdict({'obj':operobj, 'rank':  4, 'reqs': ((2,), (0,)), 'loper': '__div__', 'roper': '__idiv__'}),
-                    '%' : flatdict({'obj':operobj, 'rank':  4, 'reqs': ((2,), (0,)), 'loper': '__mod__', 'roper': '__imod__'}),
-                    '+' : flatdict({'obj':operobj, 'rank':  5, 'reqs': ((2,), (0,)), 'loper': '__add__', 'roper': '__iadd__'}),
-                    '-' : flatdict({'obj':operobj, 'rank':  5, 'reqs': ((2,), (0,)), 'loper': '__sub__', 'roper': '__isub__'}),
+                    '**': flatdict({'obj':operobj, 'rank':  3, 'reqs': ((2,), (0,)), 'loper': '__pow__', 'roper': '__rpow__'}),
+                    '*' : flatdict({'obj':operobj, 'rank':  4, 'reqs': ((2,), (0,)), 'loper': '__mul__', 'roper': '__rmul__'}),
+                    '/' : flatdict({'obj':operobj, 'rank':  4, 'reqs': ((2,), (0,)), 'loper': '__div__', 'roper': '__rdiv__'}),
+                    '%' : flatdict({'obj':operobj, 'rank':  4, 'reqs': ((2,), (0,)), 'loper': '__mod__', 'roper': '__rmod__'}),
+                    '+' : flatdict({'obj':operobj, 'rank':  5, 'reqs': ((2,), (0,)), 'loper': '__add__', 'roper': '__radd__'}),
+                    '-' : flatdict({'obj':operobj, 'rank':  5, 'reqs': ((2,), (0,)), 'loper': '__sub__', 'roper': '__rsub__'}),
                 }),
 
                 'bitwise': flatdict({
-                    '>>': flatdict({'obj':operobj, 'rank':  6, 'reqs': ((2,), (0,)), 'loper': '__rshift__', 'roper': '__irshift__'}),
-                    '<<': flatdict({'obj':operobj, 'rank':  6, 'reqs': ((2,), (0,)), 'loper': '__lshift__', 'roper': '__ilshift__'}),
-                    '&' : flatdict({'obj':operobj, 'rank':  7, 'reqs': ((2,), (0,)), 'loper': '__and__', 'roper': '__iand__'}),
-                    '^' : flatdict({'obj':operobj, 'rank':  8, 'reqs': ((2,), (0,)), 'loper': '__xor__', 'roper': '__ixor__'}),
-                    '|' : flatdict({'obj':operobj, 'rank':  9, 'reqs': ((2,), (0,)), 'loper': '__or__', 'roper': '__ior__'}),
+                    '>>': flatdict({'obj':operobj, 'rank':  6, 'reqs': ((2,), (0,)), 'loper': '__rshift__', 'roper': '__rrshift__'}),
+                    '<<': flatdict({'obj':operobj, 'rank':  6, 'reqs': ((2,), (0,)), 'loper': '__lshift__', 'roper': '__rlshift__'}),
+                    '&' : flatdict({'obj':operobj, 'rank':  7, 'reqs': ((2,), (0,)), 'loper': '__and__', 'roper': '__rand__'}),
+                    '^' : flatdict({'obj':operobj, 'rank':  8, 'reqs': ((2,), (0,)), 'loper': '__xor__', 'roper': '__rxor__'}),
+                    '|' : flatdict({'obj':operobj, 'rank':  9, 'reqs': ((2,), (0,)), 'loper': '__or__', 'roper': '__ror__'}),
                 }),
             }),
             'bitwise': flatdict({

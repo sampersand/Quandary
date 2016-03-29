@@ -9,6 +9,7 @@ class pyobj(obj):
                 assert hasattr(node1, 'obj'), 'every object should!'
                 assert hasattr(node1.obj, '_pyobj'), "The Node's object should have a python object associated with it!"
             nodeobj = node1.obj if node1.obj._pyobj_rank >= node2.obj._pyobj_rank else node2.obj
+            print(nodeobj, node1.obj, node2.obj, nodeobj._pyobj, attr, getattr(nodeobj._pyobj(node1.data), attr))
             return node1.new(data = getattr(nodeobj._pyobj(node1.data), attr)(nodeobj._pyobj(node2.data)),
                         obj = nodeobj)
         return ret

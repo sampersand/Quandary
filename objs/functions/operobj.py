@@ -58,11 +58,13 @@ class operobj(funcobj):
         left = self._pop(tstack, knowns, -2)
         right = self._pop(tstack, knowns)
         #first, try 'a.__OPER__.(b)'
-        if ret == NotImplemented and hasattr(left.obj, left.consts.opers[oper]['loper']): # KeyError: oper isnt recognized
+        if ret == NotImplemented and hasattr(left.obj, left.consts.opers[oper]['loper']) and\
+                left.obj._pyobj_rank >= right.obj._pyobj_rank: # KeyError: oper isnt recognized
             ret = getattr(left.obj, left.consts.opers[oper]['loper'])(left, right, knowns)
 
         #second, try 'b.__iOPER__.(a)'
-        if ret == NotImplemented and hasattr(right.obj, left.consts.opers[oper]['roper']): # KeyError: oper isnt recognized
+        if ret == NotImplemented and hasattr(right.obj, left.consts.opers[oper]['roper']) and\
+                right.obj._pyobj_rank >= left.obj._pyobj_rank: # KeyError: oper isnt recognized
             ret = getattr(right.obj, left.consts.opers[oper]['roper'])(right, left, knowns)
         return ret
 

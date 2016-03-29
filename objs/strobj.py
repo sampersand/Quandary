@@ -7,6 +7,9 @@ class strobj(pyobj, obj):
     @staticmethod
     def _isquotedstr(s: str, consts: 'constants'):
         return s[0] in consts.punc.quotes and s[-1] in consts.punc.quotes
+
+    def __radd__(self, right, left, knowndict):
+        return self.__add__(left, right, knowndict)
     def __add__(self, left, right, knowndict):
         """ 
             if l is quoted and r is quoted, use l's quotes.
