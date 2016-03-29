@@ -29,7 +29,8 @@ class intobj(regexobj, pyobj, numobj):
         return self._pyobj_defualt_rank + 0.001 * self.base
     
     def _pyobj_valof(self: 'intobj', node: 'node') -> int:
-        print(node.data, self.base, '@', self, node, node.obj)
+        if node.data in {'True', 'true', 'False', 'false'}:
+            return int(bool(node.data))
         return int(node.data, self.base)
 
     def _oper_div(self: 'intobj', left: 'node', right: 'node', knowns: 'knowndict') -> 'node':
