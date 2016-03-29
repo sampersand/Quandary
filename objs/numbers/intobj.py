@@ -25,6 +25,7 @@ class intobj(regexobj, pyobj, numobj):
 
 
     def _pyobj_valof(self: 'intobj', node: 'node') -> int:
+        print(node.data, self.base, '@', self, node, node.obj)
         return int(node.data, self.base)
 
     def _oper_div(self: 'intobj', left: 'node', right: 'node', knowns: 'knowndict') -> 'node':
