@@ -1,8 +1,15 @@
 from objs import obj
 class pyobj(obj):
+    """ The superclass for all Quandary objects that are linked to python objects (_pyobj) """
     _pyobj = None
     _pyobj_rank = 0
-    """ The superclass for all Quandary objects that are linked to python objects (_pyobj) """
+
+    def pyvalof(self:'intobj', node: 'node'):
+        return self._pyobj(node.data)
+
+    def _compare_and_get_obj(self, other):
+        return self if self._pyobj_rank >= other._pyobj_rank else other
+
     def __getattr__(self, attr: str):
         """ Get an attribute - like __add__ and __mod__ - that doesn't exist.
             Provides a default implementation that otherwise wouldn't exist"""
@@ -16,8 +23,3 @@ class pyobj(obj):
                         obj = objtopass)
         return ret
 
-    def pyvalof(self:'intobj', node: 'node'):
-        return self._pyobj(node.data)
-
-    def _compare_and_get_obj(self, other):
-        return self.obj if self._pyobj_rank >= other.obj._pyobj_rank else other.obj

@@ -37,8 +37,9 @@ class intobj(pyobj, numobj):
         result = left.obj.pyvalof(left) / right.obj.pyvalof(right)
         result = int(result) if float(result) == int(result) else float(result)
         return left.new(data = str(result), obj = isinstance(result, int) and intobj or floatobj)
-    @staticmethod
-    def _genfromstr(data):
+
+    @classmethod
+    def fromstr(self: type, data: 'str', consts: 'constants') -> 'obj':
         return data[0:data[-1] in 'wW' and -1 or None],\
             intobj(intobj.BASES[data[:2]] if len(data) > 1 and data[:2] in intobj.BASES else intobj.BASES['default'])
 
