@@ -1,7 +1,7 @@
 from objs import numobj, pyobj
 class floatobj(numobj, pyobj):
     """ A floating point number. """
-    _regex = r'\b(\d+)?(\.)?(?(1)\d*|\d+)(?(2)[fF]?|[fF])\b'
+    _regex = r'\b([0-9]+)?(\.)?(?(1)[0-9]*|[0-9]+)(?(2)[fF]?|[fF])\b'
     # _pyobj = float
     class _float(float):
         def __div__(self, other): return self / other
