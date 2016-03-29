@@ -10,7 +10,7 @@ class node():
             if kwargs['genobj']:
                 if __debug__ and 'obj' in kwargs:
                     raise KeyError("Error! both 'genobj' and 'obj' were passed!") #might be a warning in the future
-                kwargs['obj'] = objs.getobj(self, kwargs['data'])
+                kwargs['data'], kwargs['obj'] = objs.getobj(self, kwargs['data'])
             del kwargs['genobj']
 
         if 'obj' not in kwargs:

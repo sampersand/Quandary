@@ -28,7 +28,7 @@ if '__init__' not in __name__:
             return node.consts.opers[data]['obj']()
         for k, v in _regexes.items():
             if k.fullmatch(data):
-                return v()
-        return varobj()
+                return v._genfromstr(data) if hasattr(v, '_genfromstr') else data, v()
+        return data, varobj()
     # g=[__import__('random').randint(1,100)]
     # while g.append(int(input()))or g[-1]!=g[0]:print(g[-1]<g[0],len(g))
