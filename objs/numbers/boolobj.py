@@ -8,6 +8,10 @@ class boolobj(intobj, pyobj):
     _pyobj = bool
     _pyobj_rank = 0
 
+    def _pyobj_valof(self: 'intobj', node: 'node') -> bool:
+        quit()
+        return int(bool(node.data))
+
     # @classmethod
     # def fromstr(self: type, data: str, consts: 'constants') -> 'obj':
     #     return data[0] in 'Tt' and True or False

@@ -46,5 +46,4 @@ class intobj(regexobj, pyobj, numobj):
         base = self.BASES['default']
         if len(ret) > 1 and ret[0][:2] in self.BASES:
             base = self.BASES[ret[0][:2]]
-        print(ret[0], self.BASES, base, self, )
         return ret[0], intobj(base = base)
