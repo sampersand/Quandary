@@ -1,4 +1,4 @@
-__toimport__ = ('obj', 'nullobj', 'varobj', 'pyobj',
+__toimport__ = ('obj', 'nullobj', 'varobj', 'pyobj', 'strobj', 
                 ('numbers', 'numobj', 'intobj', 'floatobj', 'complexobj', 'boolobj'),
                 ('functions', 'funcobj', 'ibfuncobj', 'operobj'))
 if '__init__' not in __name__:
@@ -10,7 +10,7 @@ if '__init__' not in __name__:
             if isinstance(_obj, tuple):
                 for x in _import(_obj[1:], package + _obj[0] + '.'):
                     yield x
-    for _obj_name, _obj_type in _import(__toimport__, 'objs.'):
+    for _obj_name, _obj_type in _import(__toimport__, __package__ and __package__ + '.' or ''):
         locals()[_obj_name] = _obj_type
     # locals().update()
     del _import, _obj_name, _obj_type
