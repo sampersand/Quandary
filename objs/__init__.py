@@ -1,5 +1,5 @@
 __toimport__ = ('obj', 'nullobj', 'varobj', 'pyobj', 'strobj', 
-                ('numbers', 'numobj', 'intobj', 'floatobj', 'complexobj', 'boolobj'),
+                ('numbers', 'numobj', 'floatobj', 'intobj', 'complexobj', 'boolobj'),
                 ('functions', 'funcobj', 'ibfuncobj', 'operobj'))
 if '__init__' not in __name__:
     import re, os

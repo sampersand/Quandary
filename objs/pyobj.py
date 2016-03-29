@@ -12,5 +12,4 @@ class pyobj(obj):
             return node1.new(data = getattr(nodeobj._pyobj(node1.data), attr)(nodeobj._pyobj(node2.data)),
                         obj = nodeobj)
         return ret
-    # def __add__(self, a, b):
-        # ret = 
+
