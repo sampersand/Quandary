@@ -12,6 +12,8 @@ class pyobj(obj):
     def _pyobj_compare(self: 'obj', other: 'obj') -> 'obj':
         return self if self._pyobj_rank >= other._pyobj_rank else other
 
+    def _pyobj_getattr(self: 'obj', base: type, attr: 'str') -> Callable:
+        return getattr(base, '__' + attr[6:] + '__')
     def __getattr__(self: 'obj', attr: str) -> Callable:
         """ Get an attribute - like __add__ and __mod__ - that doesn't exist.
             Provides a default implementation that otherwise wouldn't exist"""
@@ -21,7 +23,7 @@ class pyobj(obj):
                 assert hasattr(node1.obj, '_pyobj_valof'), "The Node's object should have a python object associated with it!"
             objtopass = node1.obj._pyobj_compare(node2.obj)
             return node1.new(\
-                        data = getattr(objtopass._pyobj_valof(node1), attr)(objtopass._pyobj_valof(node2)),
+                        data = self._pyobj_getattr(objtopass._pyobj_valof(node1), attr)(objtopass._pyobj_valof(node2)),
                         obj = objtopass)
         return attr[:6] == '_oper_' and ret or super().__getattr____(attr)
 
