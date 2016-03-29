@@ -22,7 +22,8 @@ class node():
 
     def __getattr__(self: 'node', attr: str) -> Any:
         """ gets 'self._attrs[attr]' """
-        return self._attrs[attr] if attr in self else None
+        return self._attrs[attr] #doesn't check if it exists anymore
+        # return self._attrs[attr] if attr in self else None
 
     def __setattr__(self: 'node', attr: str, val: Any) -> None:
         """ sets 'self._attrs[attr]' to val"""

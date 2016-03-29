@@ -22,7 +22,7 @@ class intobj(pyobj, numobj):
         return super().__repr__(base = self.base) 
 
 
-    def getpyval(self:'intobj', node: 'node'):
+    def pyvalof(self:'intobj', node: 'node'):
         return int(node.data, self.base)
 
     # _regex = r'\b([1-9][0-9]*|0)[wW]?\b' #w for whole
@@ -34,7 +34,7 @@ class intobj(pyobj, numobj):
         if __debug__:
             assert hasattr(right.obj, '_pyobj'), "Cannot divide an '{}' by a non-simple type '{}'".format(left.obj,
                                                                                                           right.obj)
-        result = left.obj.getpyval(left) / right.obj.getpyval(right)
+        result = left.obj.pyvalof(left) / right.obj.pyvalof(right)
         result = int(result) if float(result) == int(result) else float(result)
         return left.new(data = str(result), obj = isinstance(result, int) and intobj or floatobj)
     @staticmethod

@@ -4,14 +4,20 @@ class pyobj(obj):
     _pyobj_rank = 0
     """ The superclass for all Quandary objects that are linked to python objects (_pyobj) """
     def __getattr__(self, attr: str):
+        """ Get an attribute - like __add__ and __mod__ - that doesn't exist.
+            Provides a default implementation that otherwise wouldn't exist"""
         def ret(node1: 'node', node2: 'node', knowns: 'knownsdict') -> 'node':
             if __debug__:
                 assert hasattr(node1, 'obj'), 'every object should!'
-                assert hasattr(node1.obj, 'getpyval'), "The Node's object should have a python object associated with it!"
-            nodeobj = node1.obj if node1.obj._pyobj_rank >= node2.obj._pyobj_rank else node2.obj
-            return node1.new(data = getattr(nodeobj.getpyval(node1), attr)(nodeobj.getpyval(node2)),
-                        obj = nodeobj)
+                assert hasattr(node1.obj, 'pyvalof'), "The Node's object should have a python object associated with it!"
+            objtopass = node1.obj._compare_and_get_obj(node2.obj)
+            return node1.new(\
+                        data = getattr(objtopass.pyvalof(node1), attr)(objtopass.pyvalof(node2)),
+                        obj = objtopass)
         return ret
 
-    def getpyval(self:'intobj', node: 'node'):
+    def pyvalof(self:'intobj', node: 'node'):
         return self._pyobj(node.data)
+
+    def _compare_and_get_obj(self, other):
+        return self.obj if self._pyobj_rank >= other.obj._pyobj_rank else other.obj
