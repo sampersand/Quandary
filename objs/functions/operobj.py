@@ -2,7 +2,6 @@ import copy
 from decimal import Decimal
 from typing import Callable
 from types import GeneratorType as gentype
-from node import node
 from objs import varobj, funcobj
 class operobj(funcobj):
     """ An operator. """
@@ -100,10 +99,10 @@ class operobj(funcobj):
                 else: NotImplemented
             """
             if ret == NotImplemented and (len(tstack) - len(ostack)) == 1:
-                ret = node(knowns.consts, data = str('0.'+self._pop(tstack, knowns).data), genobj = True)
+                ret = tstack[-1].new(data = str('0.'+self._pop(tstack, knowns).data), genobj = True)
             
             if ret == NotImplemented and (len(tstack) - len(ostack)) == 2:
-                ret = node(knowns.consts,
+                ret = tstack[-1].new(
                            data = str(self._pop(tstack, knowns, -2).data + '.' + self._pop(tstack, knowns).data),
                            genobj = True)
         

@@ -75,6 +75,9 @@ class node():
             reduce_os()
         return ts.pop()
 
+    def new(self: 'node', consts = None, **kwargs):
+        return node(consts or self.consts, **kwargs)
+
 def getiter(consts: 'constants', iterable: Callable) -> node:
     """ get an iterable, where each successive element is a node."""
     kws = consts.keywords.copy()

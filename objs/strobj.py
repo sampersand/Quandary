@@ -4,5 +4,7 @@ class strobj(pyobj, obj):
     _regex = r'["\'].*["\']'
     _pyobj = str
     _pyobj_rank = 4
-    # def __add__(self, *args, passa):
+    def __add__(self, left, right, knowndict):
+        if left.data[-1] in knowndict.consts.punc.quotes:
+            pass
         # if args[0][-1] in args[0].control
