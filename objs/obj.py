@@ -8,5 +8,5 @@ class obj():
             format(kwargs and ', '.join(str(k) + ' = ' + str(v) for k,v in kwargs.items()) or '')
 
     @classmethod
-    def fromstr(self: type, data: str, consts: 'constants') -> 'obj':
+    def fromstr(self: type, data: str, consts: 'constants') -> ((str, 'obj'), None):
         return None

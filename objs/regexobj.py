@@ -5,13 +5,13 @@ class regexobj(obj):
     _regex = None
 
     @classmethod
-    def _regex_fixdatastr(self: type, data: str) -> str:
+    def _regex_fix(self: type, data: str) -> str:
         return data
 
     @classmethod
-    def fromstr(self: type, data: str, consts: 'constants') -> 'obj':
+    def fromstr(self: type, data: str, consts: 'constants') -> ((str, 'regexobj'), None):
         if __debug__:
             assert hasattr(self, '_regex'), "non-regex object '{}' shouldn't extend regexobj!".format(self)
         if self._regex and re.fullmatch(self._regex, data):
-            return self._regex_fixdatastr(data), self()
+            return self._regex_fix(data), self()
         return None

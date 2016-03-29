@@ -16,18 +16,18 @@ class intobj(regexobj, pyobj, numobj):
     _pyobj = int
     _pyobj_rank = 1
 
-    def __init__(self, base = BASES['default']):
+    def __init__(self: 'intobj', base = BASES['default']) -> None:
+        super().__init__()
         self.base = base
 
-    def __repr__(self):
+    def __repr__(self: 'intobj') -> str:
         return super().__repr__(base = self.base) 
 
 
-    def _pyobj_valof(self:'intobj', node: 'node'):
+    def _pyobj_valof(self: 'intobj', node: 'node') -> int:
         return int(node.data, self.base)
 
-    # _regex = r'\b([1-9][0-9]*|0)[wW]?\b' #w for whole
-    def __div__(self, left, right, knowndict):
+    def _oper_div(self: 'intobj', left: 'node', right: 'node', knowns: 'knowndict') -> 'node':
         """ 
             if l and r are ints, return int
             if l or r is float, return float

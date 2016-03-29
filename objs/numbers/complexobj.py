@@ -1,5 +1,5 @@
-from objs import numobj, pyobj
-class complexobj(numobj, pyobj):
+from objs import numobj, pyobj, regexobj
+class complexobj(regexobj, pyobj, numobj):
     """ A complex object """
     _regex = r'\b((\d+)?\.(?(2)\d*|\d+)[iIjJ])\b'
     _pyobj = complex

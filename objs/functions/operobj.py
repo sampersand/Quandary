@@ -5,6 +5,7 @@ from types import GeneratorType as gentype
 from objs import varobj, funcobj
 class operobj(funcobj):
     """ An operator. """
+
     @staticmethod
     def _pop(tstack, knowns, pos = -1, dothrow = True):
         ret = tstack.pop(pos)
@@ -14,6 +15,7 @@ class operobj(funcobj):
             elif dothrow:
                 raise SyntaxError("Unknown variable '{}'!".format(ret.data))
         return ret
+
     def evaloper(self: 'operobj',
                  tstack: list,
                  ostack: list,
@@ -31,15 +33,15 @@ class operobj(funcobj):
 
         #first see if it's a simple operator
         if ret == NotImplemented and oper in opers['simple_binary']:
-            ret = self._evalsimple(tstack, ostack, gen, knowns, oper)
+            ret = self._eval_simple(tstack, ostack, gen, knowns, oper)
 
         #second see if it's an assignment
         elif ret == NotImplemented and oper in opers['assignment']:
-            ret = self._evalassign(tstack, ostack, gen, knowns, oper)
+            ret = self._eval_assign(tstack, ostack, gen, knowns, oper)
 
         #third, see if it's a deliminator
         elif ret == NotImplemented and oper in opers['delims']:
-            ret = self._evaldelim(tstack, ostack, gen, knowns, oper)
+            ret = self._eval_delim(tstack, ostack, gen, knowns, oper)
 
         #lastly, throw an exception
         if ret == NotImplemented:
@@ -47,8 +49,7 @@ class operobj(funcobj):
                 oper, tstack, ostack))
         return ret
 
-
-    def _evalsimple(self: 'operobj',
+    def _eval_simple(self: 'operobj',
                     tstack: list,
                     ostack: list,
                     gen: gentype,
@@ -68,7 +69,7 @@ class operobj(funcobj):
             ret = getattr(right.obj, left.consts.opers[oper]['roper'])(right, left, knowns)
         return ret
 
-    def _evalassign(self: 'operobj',
+    def _eval_assign(self: 'operobj',
                     tstack: list,
                     ostack: list,
                     gen: gentype,
@@ -84,7 +85,7 @@ class operobj(funcobj):
         knowns[right.data] = left
         return knowns[right.data]
 
-    def _evaldelim(self: 'operobj',
+    def _eval_delim(self: 'operobj',
                    tstack: list,
                    ostack: list,
                    gen: gentype,
@@ -110,7 +111,11 @@ class operobj(funcobj):
         
         return ret
 
-
+    @classmethod
+    def fromstr(self: type, data: str, consts: 'constants') -> ((str, 'operobj'), None):
+        if data in consts.opers:
+            return data, consts.opers[data]['obj']()
+        return None
 
 
 

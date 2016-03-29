@@ -1,5 +1,5 @@
-from objs import numobj, pyobj
-class floatobj(numobj, pyobj):
+from objs import numobj, pyobj, regexobj
+class floatobj(regexobj, pyobj, numobj):
     """ A floating point number. """
     _regex = r'\b([0-9]+)?(\.)?(?(1)[0-9]*|[0-9]+)(?(2)[fF]?|[fF])\b'
     # _pyobj = float

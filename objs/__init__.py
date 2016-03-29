@@ -22,6 +22,7 @@ if '__init__' not in __name__:
         for cobj in checkorder:
             ret = globals()[cobj].fromstr(data, node.consts)
             if ret != None:
+                print(ret)
                 return ret
         # if data == '':
         #     return data, nullobj()
