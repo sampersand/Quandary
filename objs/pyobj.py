@@ -7,9 +7,11 @@ class pyobj(obj):
         def ret(node1: 'node', node2: 'node', knowns: 'knownsdict') -> 'node':
             if __debug__:
                 assert hasattr(node1, 'obj'), 'every object should!'
-                assert hasattr(node1.obj, '_pyobj'), "The Node's object should have a python object associated with it!"
+                assert hasattr(node1.obj, 'getpyval'), "The Node's object should have a python object associated with it!"
             nodeobj = node1.obj if node1.obj._pyobj_rank >= node2.obj._pyobj_rank else node2.obj
-            return node1.new(data = getattr(nodeobj._pyobj(node1.data), attr)(nodeobj._pyobj(node2.data)),
+            return node1.new(data = getattr(nodeobj.getpyval(node1), attr)(nodeobj.getpyval(node2)),
                         obj = nodeobj)
         return ret
 
+    def getpyval(self:'intobj', node: 'node'):
+        return self._pyobj(node.data)

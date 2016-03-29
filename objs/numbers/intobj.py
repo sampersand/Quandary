@@ -19,11 +19,11 @@ class intobj(pyobj, numobj):
         self.base = base
 
     def __repr__(self):
-        return super().__repr__(base = base) 
+        return super().__repr__(base = self.base) 
 
 
-    def getval(self:'intobj', node: 'node'):
-        return int(node.base, self.base)
+    def getpyval(self:'intobj', node: 'node'):
+        return int(node.data, self.base)
 
     # _regex = r'\b([1-9][0-9]*|0)[wW]?\b' #w for whole
     def __div__(self, left, right, knowndict):
@@ -34,7 +34,7 @@ class intobj(pyobj, numobj):
         if __debug__:
             assert hasattr(right.obj, '_pyobj'), "Cannot divide an '{}' by a non-simple type '{}'".format(left.obj,
                                                                                                           right.obj)
-        result = left.obj._pyobj(left.data) / right.obj._pyobj(right.data)
+        result = left.obj.getpyval(left) / right.obj.getpyval(right)
         result = int(result) if float(result) == int(result) else float(result)
         return left.new(data = str(result), obj = isinstance(result, int) and intobj or floatobj)
     @staticmethod
