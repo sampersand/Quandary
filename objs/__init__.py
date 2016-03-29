@@ -21,14 +21,14 @@ if '__init__' not in __name__:
 
     def getobj(node: 'node', data: (str, None)) -> obj:
         if data == None:
-            return varobj()
+            return data, varobj()
         if data == '':
-            return nullobj()
+            return data, nullobj()
         if data in node.consts.opers:
-            return node.consts.opers[data]['obj']()
+            return data, node.consts.opers[data]['obj']()
         for k, v in _regexes.items():
             if k.fullmatch(data):
-                return v._genfromstr(data) if hasattr(v, '_genfromstr') else data, v()
+                return v._genfromstr(data) if hasattr(v, '_genfromstr') else (data, v())
         return data, varobj()
     # g=[__import__('random').randint(1,100)]
     # while g.append(int(input()))or g[-1]!=g[0]:print(g[-1]<g[0],len(g))

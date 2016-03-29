@@ -11,4 +11,4 @@ class floatobj(numobj, pyobj):
 
     @staticmethod
     def _genfromstr(data):
-        return data[0:data[-1] in 'fF' and -1 or None], floatobj
+        return data[0:data[-1] in 'fF' and -1 or None], floatobj()
