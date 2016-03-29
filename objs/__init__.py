@@ -1,4 +1,4 @@
-__toimport__ = ('obj', 'nullobj', 'varobj', 'pyobj', 'strobj', 
+__toimport__ = ('obj', 'pyobj', 'regexobj', 'nullobj', 'varobj', 'strobj', 
                 ('numbers', 'numobj', 'floatobj', 'intobj', 'complexobj', 'boolobj'),
                 ('functions', 'funcobj', 'ibfuncobj', 'operobj'))
 if '__init__' not in __name__:
@@ -17,10 +17,9 @@ if '__init__' not in __name__:
 
     # _regexes = {re.compile(o._regex):o for o in locals().values() if hasattr(o, '_regex')}
 
-    def getobj(node: 'node', data: (str, None)) -> obj:
-        if data == None:
-            return data, varobj()
-        for cobj in __all__:
+    def getobj(node: 'node', data: (str, None), checkorder = __all__) -> obj:
+        if data == None: return data, varobj()
+        for cobj in checkorder:
             ret = globals()[cobj].fromstr(data, node.consts)
             if ret != None:
                 return ret

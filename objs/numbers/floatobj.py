@@ -9,6 +9,6 @@ class floatobj(numobj, pyobj):
     _pyobj = _float
     _pyobj_rank = 2
 
-    @classmethod
-    def fromstr(self: type, data: 'str', consts: 'constants') -> 'obj':
-        return data[0:data[-1] in 'fF' and -1 or None], floatobj()
+    # @classmethod
+    # def fromstr(self: type, data: str, consts: 'constants') -> 'obj':
+    #     return data[0:data[-1] in 'fF' and -1 or None], floatobj()

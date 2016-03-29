@@ -1,4 +1,4 @@
-0xff + 1 -> a
+1 -> a
 @eof
 4 / 2f -> o
 1.23 + 2 -> something;
