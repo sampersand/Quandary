@@ -14,7 +14,7 @@ class intobj(regexobj, pyobj, numobj):
         )[wW]?
         ''' #w for whole
     _pyobj = int
-    _pyobj_rank = 1
+    _pyobj_defualt_rank = 1
 
     def __init__(self: 'intobj', base = None) -> None:
         super().__init__()
@@ -23,7 +23,11 @@ class intobj(regexobj, pyobj, numobj):
     def __repr__(self: 'intobj') -> str:
         return super().__repr__(base = self.base) 
 
-
+    @property
+    def _pyobj_rank(self: 'intobj') -> float:
+        #assumes that base < 1000
+        return self._pyobj_defualt_rank + 0.001 * self.base
+    
     def _pyobj_valof(self: 'intobj', node: 'node') -> int:
         print(node.data, self.base, '@', self, node, node.obj)
         return int(node.data, self.base)

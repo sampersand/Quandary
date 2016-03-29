@@ -60,15 +60,18 @@ class operobj(funcobj):
         ret = NotImplemented
         left = self._pop(tstack, knowns, -2)
         right = self._pop(tstack, knowns)
+
         #first, try 'a.__OPER__.(b)'
         if ret == NotImplemented and hasattr(left.obj, left.consts.opers[oper]['loper']) and\
                 left.obj == left.obj._pyobj_compare(right.obj): # KeyError: oper isnt recognized
+            #problem is int base 2 and int base 10 are the same priority... maybe 2.02 and 2.10
             ret = getattr(left.obj, left.consts.opers[oper]['loper'])(left, right, knowns)
 
         #second, try 'b.__iOPER__.(a)'
         if ret == NotImplemented and hasattr(right.obj, left.consts.opers[oper]['roper']) and\
                 right.obj == right.obj._pyobj_compare(left.obj): #KeyError: oepr isnt recognized
             ret = getattr(right.obj, left.consts.opers[oper]['roper'])(right, left, knowns)
+
         return ret
 
     def _eval_assign(self: 'operobj',
