@@ -1,7 +1,7 @@
-from objs import obj, pyobj
-class strobj(pyobj, obj):
+from objs import obj, pyobj, regexobj
+class strobj(regexobj, pyobj, obj):
     """ A String object. """
-    _regex = r'["\'].*["\']'
+    _regex = r'(["\']).*\1'
     _pyobj = str
     _pyobj_rank = 4
 
