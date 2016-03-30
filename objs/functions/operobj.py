@@ -104,7 +104,7 @@ class operobj(funcobj):
             while ostack:
                 print(ostack, tstack)
                 ostack[-1]._reduce_os(tstack, ostack, gen, knowns)
-            ret = self._pop(tstack, knowns)
+            tstack.append(self._pop(tstack, knowns))
             return True
         return False
 

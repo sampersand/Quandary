@@ -33,7 +33,6 @@ class strobj(pyobj, obj):
         ret = super()._oper_attribute(left, right, knowns)
         if ret != NotImplemented:
             return ret
-        quit(right.obj)
         if not isinstance(right.obj, intobj):
             return NotImplemented
         #This is assuming that both left and right are intobjs

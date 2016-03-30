@@ -9,7 +9,7 @@ class boolobj(intobj, pyobj):
     _pyobj_rank = 0
 
     def _pyobj_valof(self: 'intobj', node: 'node') -> bool:
-        quit()
+        quit('todo! this')
         return int(bool(node.data))
 
     # @classmethod
