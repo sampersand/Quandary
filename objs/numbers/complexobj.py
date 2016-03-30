@@ -3,7 +3,7 @@ class complexobj(regexobj, pyobj, numobj):
     """ A complex object """
     _regex = r'\b((\d+)?\.(?(2)\d*|\d+)[iIjJ])\b'
     _pyobj = complex
-    _pyobj_rank = 3
+    _pyobj_default_rank = 3
 
     # @classmethod
     # def fromstr(self: type, data: str, consts: 'constants') -> 'obj': #assumes the length of data is >= 1

@@ -54,14 +54,14 @@ class operobj(funcobj):
 
         #first, try 'a.__OPER__.(b)'
         if hasattr(left.obj, v.consts.opers[oper]['loper']) and\
-                left.obj == left.obj._pyobj_compare(right.obj): # KeyError: oper isnt recognized
+                left.obj == left.obj._pyobj_compare(right.obj, v): # KeyError: oper isnt recognized
             result = getattr(left.obj, v.consts.opers[oper]['loper'])(left, right, v)
             if result != NotImplemented:
                 v.ts.pop(); v.ts.pop(); v.ts.append(result);
                 return True
         #second, try 'b.__rOPER__.(a)'
         if hasattr(right.obj, v.consts.opers[oper]['roper']) and\
-                right.obj == right.obj._pyobj_compare(left.obj): #KeyError: oepr isnt recognized
+                right.obj == right.obj._pyobj_compare(left.obj, v): #KeyError: oepr isnt recognized
             result = getattr(right.obj, v.consts.opers[oper]['roper'])(right, left, v)
             if result != NotImplemented:
                 v.ts.pop(); v.ts.pop(); v.ts.append(result);

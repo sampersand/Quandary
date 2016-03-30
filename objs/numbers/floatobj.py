@@ -7,7 +7,7 @@ class floatobj(regexobj, pyobj, numobj):
         def __div__(self, other): return self / other
         def __rdiv__(self, other): return other / self
     _pyobj = _float
-    _pyobj_rank = 2
+    _pyobj_default_rank = 2
 
     # @classmethod
     # def fromstr(self: type, data: str, consts: 'constants') -> 'obj':

@@ -3,7 +3,7 @@ class strobj(regexobj, pyobj, obj):
     """ A String object. """
     _regex = r'(["\']).*\1'
     _pyobj = str
-    _pyobj_rank = 4
+    _pyobj_default_rank = 4
 
     @staticmethod
     def _isquotedstr(s: str, consts: 'constants') -> bool:

@@ -23,17 +23,16 @@ class intobj(regexobj, pyobj, numobj):
     def __repr__(self: 'intobj') -> str:
         return super().__repr__(base = self.base) 
 
-    @property
-    def _pyobj_rank(self: 'intobj') -> float:
+    def _pyobj_rank(self: 'intobj', v: 'flatdict') -> float:
         #assumes that base < 1000
         return self._pyobj_defualt_rank + 0.001 * self.base
     
-    def _pyobj_valof(self: 'intobj', node: 'node') -> int:
+    def _pyobj_valof(self: 'intobj', node: 'node', v: 'flatdict') -> int:
         if node.data in {'True', 'true', 'False', 'false'}:
             return int(bool(node.data))
         return int(node.data, self.base)
 
-    def _oper_div(self: 'intobj', left: 'node', right: 'node', knowns: 'knowndict') -> 'node':
+    def _oper_div(self: 'intobj', left: 'node', right: 'node', v: 'flatdict') -> 'node':
         """ 
             if l and r are ints, return int
             if l or r is float, return float
@@ -41,7 +40,7 @@ class intobj(regexobj, pyobj, numobj):
         if __debug__:
             assert hasattr(right.obj, '_pyobj'), "Cannot divide an '{}' by a non-simple type '{}'".format(left.obj,
                                                                                                           right.obj)
-        result = left.obj._pyobj_valof(left) / right.obj._pyobj_valof(right)
+        result = left.obj._pyobj_valof(left, v) / right.obj._pyobj_valof(right, v)
         result = int(result) if float(result) == int(result) else float(result)
         return left.new(data = str(result), genobj = True)#obj = isinstance(result, int) and intobj or floatobj)
     @classmethod
@@ -54,12 +53,13 @@ class intobj(regexobj, pyobj, numobj):
             base = self.BASES[ret[0][:2]]
         return ret[0], intobj(base = base)
 
-    def _oper_attribute(self: 'strobj', left: 'node', right: 'node', knowns: 'knowndict') -> 'node':
-        ret = super()._oper_attribute(left, right, knowns)
+    def _oper_attribute(self: 'strobj', left: 'node', right: 'node', v: 'flatdict') -> 'node':
+        ret = super()._oper_attribute(left, right, v)
         if ret != NotImplemented:
             return ret
         if not isinstance(right.obj, intobj):
             return NotImplemented
         #This is assuming that both left and right are intobjs
         #This is effectively ####.####
-        return left.new(data = '{}.{}'.format(left.obj._pyobj_valof(left), left.obj._pyobj_valof(right)), genobj = True)
+        return left.new(data = '{}.{}'.format(left.obj._pyobj_valof(left, v), left.obj._pyobj_valof(right, v)),\
+                        genobj = True)

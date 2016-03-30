@@ -65,7 +65,7 @@ class node():
         for t in v.gen:
             if t.data in v.consts.punc.parens:
                 if not v.consts.punc.parens[t.data]:
-                    v.ts.append(node.evalnode(gen, v.knowns).ts[-1])
+                    v.ts.append(node.evalnode(gen, v.knowns))
                 else:
                     while v.os:
                         node._reduce_os(v)
