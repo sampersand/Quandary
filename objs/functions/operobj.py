@@ -109,6 +109,7 @@ class operobj(funcobj):
                 print(ostack, tstack)
                 ostack[-1]._reduce_os(tstack, ostack, gen, knowns)
             ret = self._pop(tstack, knowns)
+            return 
 
         # if ret == NotImplemented and oper == '.':
         #     """ if len(ostack) - len(tstack) == 2: 'tstack[-2].tstack[-1]'
