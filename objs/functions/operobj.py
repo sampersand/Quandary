@@ -32,60 +32,57 @@ class operobj(funcobj):
             assert len(tstack) >= min(reqs[0]), "Too few tokens {} to perform '{}' ({})".format(tstack, oper, reqs[0])
             assert len(ostack) >= min(reqs[1]), "Too few opers {} to perform '{}' ({})".format(ostack, oper, reqs[1])
             del reqs
-        ret = NotImplemented
+        worked = False
 
         #first see if it's a simple operator
-        if ret == NotImplemented and oper in opers['simple_binary']:
-            ret = self._eval_simple(tstack, ostack, gen, knowns, oper)
+        if worked == False and oper in opers['simple_binary']:
+            worked = self._eval_simple(tstack, ostack, gen, knowns, oper)
 
         #second see if it's an assignment
-        elif ret == NotImplemented and oper in opers['assignment']:
-            ret = self._eval_assign(tstack, ostack, gen, knowns, oper)
+        elif worked == False and oper in opers['assignment']:
+            worked = self._eval_assign(tstack, ostack, gen, knowns, oper)
 
         #third, see if it's a deliminator
-        elif ret == NotImplemented:
-            ret = self._eval_etc(tstack, ostack, gen, knowns, oper)
+        elif worked == False:
+            worked = self._eval_etc(tstack, ostack, gen, knowns, oper)
 
         #lastly, throw an exception
-        if ret == NotImplemented:
+        if worked == False:
             raise AttributeError("No known way to apply operator '{}' to stacks '{}' and '{}'".format(\
                 oper, tstack, ostack))
-        return ret
 
     def _eval_simple(self: 'operobj',
                     tstack: list,
                     ostack: list,
                     gen: gentype,
                     knowns: 'knownsdict',
-                    oper: str) -> ('node', NotImplemented):
-        ret = NotImplemented
-        left = tstack[-2]#self._pop(tstack, knowns, -2)
-        right = tstack[-1]#self._pop(tstack, knowns)
+                    oper: str) -> bool:
+        left = tstack[-2]
+        right = tstack[-1]
 
         #first, try 'a.__OPER__.(b)'
-        if ret == NotImplemented and hasattr(left.obj, left.consts.opers[oper]['loper']) and\
+        if hasattr(left.obj, left.consts.opers[oper]['loper']) and\
                 left.obj == left.obj._pyobj_compare(right.obj): # KeyError: oper isnt recognized
-            #problem is int base 2 and int base 10 are the same priority... maybe 2.02 and 2.10
-            ret = getattr(left.obj, right.consts.opers[oper]['loper'])(left, #right
-                                                                       right, #left
-                                                                       knowns)
-            if ret != NotImplemented: tstack.pop(); tstack.pop();
+            result = getattr(left.obj, right.consts.opers[oper]['loper'])(left, right, knowns)
+            if result != NotImplemented:
+                tstack.pop(); tstack.pop(); tstack.append(result);
+                return True
         #second, try 'b.__rOPER__.(a)'
-        if ret == NotImplemented and hasattr(right.obj, left.consts.opers[oper]['roper']) and\
+        if hasattr(right.obj, left.consts.opers[oper]['roper']) and\
                 right.obj == right.obj._pyobj_compare(left.obj): #KeyError: oepr isnt recognized
-            ret = getattr(right.obj, left.consts.opers[oper]['roper'])(right, #right
-                                                                       left, #left
-                                                                       knowns)
-            if ret != NotImplemented: tstack.pop(); tstack.pop();
+            result = getattr(right.obj, left.consts.opers[oper]['roper'])(right, left, knowns)
+            if result != NotImplemented:
+                tstack.pop(); tstack.pop(); tstack.append(result);
+                return True
 
-        return ret
+        return False
 
     def _eval_assign(self: 'operobj',
                     tstack: list,
                     ostack: list,
                     gen: gentype,
                     knowns: 'knownsdict',
-                    oper: str) -> ('node', NotImplemented):
+                    oper: str) -> bool:
         direc = oper == '->'
         left = tstack.pop(~direc) #if direc is 1, pop second to last.
         right = tstack.pop()
@@ -94,22 +91,22 @@ class operobj(funcobj):
             assert list(sorted(right.attrs.keys())) == ['data', 'obj'] #can only be data and object,
                                                                        # nothing more complex than that
         knowns[right.data] = left
-        return knowns[right.data]
+        tstack.append(knowns[right.data])
+        return True
 
     def _eval_etc(self: 'operobj',
                    tstack: list,
                    ostack: list,
                    gen: gentype,
                    knowns: 'knownsdict',
-                   oper: str) -> ('node', NotImplemented):
-        ret = NotImplemented
-
-        if ret == NotImplemented and oper == ';':
+                   oper: str) -> bool:
+        if oper == ';':
             while ostack:
                 print(ostack, tstack)
                 ostack[-1]._reduce_os(tstack, ostack, gen, knowns)
             ret = self._pop(tstack, knowns)
-            return 
+            return True
+        return False
 
         # if ret == NotImplemented and oper == '.':
         #     """ if len(ostack) - len(tstack) == 2: 'tstack[-2].tstack[-1]'
@@ -133,8 +130,6 @@ class operobj(funcobj):
             #     ret = tstack[-1].new(
             #                data = str(self._pop(tstack, knowns, -2).data + '.' + self._pop(tstack, knowns).data),
             #                genobj = True)
-        
-        return ret
 
     @classmethod
     def fromstr(self: type, data: str, consts: 'constants') -> ((str, 'operobj'), None):

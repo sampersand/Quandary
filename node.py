@@ -54,7 +54,7 @@ class node():
     def _reduce_os(ts: list, os: list, gen: gentype, knowns: 'knowndict') -> None:
         if __debug__:
             assert isinstance(os[-1].obj, objs.operobj), "Expected an operobj, not a '{}'".format(os[-1].obj)
-        ts.append(os[-1].obj.evaloper(ts, os, gen, knowns, os.pop().data))
+        os[-1].obj.evaloper(ts, os, gen, knowns, os.pop().data)
 
     @staticmethod
     def evalnode(gen: gentype, knowns: 'knowndict') -> 'node':

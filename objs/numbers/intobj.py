@@ -43,7 +43,7 @@ class intobj(regexobj, pyobj, numobj):
                                                                                                           right.obj)
         result = left.obj._pyobj_valof(left) / right.obj._pyobj_valof(right)
         result = int(result) if float(result) == int(result) else float(result)
-        return left.new(data = str(result), obj = isinstance(result, int) and intobj or floatobj)
+        return left.new(data = str(result), genobj = True)#obj = isinstance(result, int) and intobj or floatobj)
     @classmethod
     def fromstr(self: type, data: str, consts: 'constants') -> ((str, 'regexobj'), None):
         ret = super().fromstr(data, consts)
