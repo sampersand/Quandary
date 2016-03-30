@@ -11,10 +11,10 @@ class operobj(funcobj):
         ret = tstack.pop(pos)
         if ret.obj.isreference():
             if ret.data in knowns: #doesn't check for anything else
-                return knowns[ret.data]
+                ret =  knowns[ret.data]
             elif dothrow: 
                 raise SyntaxError("Unknown variable '{}'!".format(ret.data))
-        knowns.c.last = ret #is this a good place to put it
+        knowns.c.last = ret #this is the last element fount
         return ret
 
     def evaloper(self: 'operobj',

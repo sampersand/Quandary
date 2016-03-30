@@ -53,11 +53,7 @@ class node():
     @staticmethod
     def evalnode(gen: gentype, knowns: 'knowndict') -> 'node':
         #ONLY SETS TOKENS, NOT OPERS, TO knowns.c.last
-        class _appendlist(list):
-            def append(self, o):
-                super().append(o)
-                knowns.c.last = o
-        ts, os = _appendlist(), [] #token / oper stack
+        ts, os = [], [] #token / oper stack
         def reduce_os():
             if __debug__:
                 assert isinstance(os[-1].obj, objs.operobj), "Expected an operobj, not a '{}'".format(o.obj)
