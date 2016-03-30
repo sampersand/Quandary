@@ -21,7 +21,7 @@ class obj():
         return NotImplemented
 
     def _oper_rattribute(self: 'strobj', left: 'node', right: 'node', knowns: 'knowndict') -> ('node', NotImplemented):
-        return _oper_attribute
+        return NotImplemented
 
     def _oper_attribute_attr(self: 'strobj', left: 'node', attr: str, knowns: 'knowndict') -> 'node':
         return NotImplemented
