@@ -59,19 +59,24 @@ class operobj(funcobj):
                     knowns: 'knownsdict',
                     oper: str) -> ('node', NotImplemented):
         ret = NotImplemented
-        left = self._pop(tstack, knowns, -2)
-        right = self._pop(tstack, knowns)
+        left = tstack[-2]#self._pop(tstack, knowns, -2)
+        right = tstack[-1]#self._pop(tstack, knowns)
 
         #first, try 'a.__OPER__.(b)'
         if ret == NotImplemented and hasattr(left.obj, left.consts.opers[oper]['loper']) and\
                 left.obj == left.obj._pyobj_compare(right.obj): # KeyError: oper isnt recognized
             #problem is int base 2 and int base 10 are the same priority... maybe 2.02 and 2.10
-            ret = getattr(left.obj, left.consts.opers[oper]['loper'])(left, right, knowns)
-
+            ret = getattr(left.obj, right.consts.opers[oper]['loper'])(left, #right
+                                                                       right, #left
+                                                                       knowns)
+            if ret != NotImplemented: tstack.pop(); tstack.pop();
         #second, try 'b.__rOPER__.(a)'
         if ret == NotImplemented and hasattr(right.obj, left.consts.opers[oper]['roper']) and\
                 right.obj == right.obj._pyobj_compare(left.obj): #KeyError: oepr isnt recognized
-            ret = getattr(right.obj, left.consts.opers[oper]['roper'])(right, left, knowns)
+            ret = getattr(right.obj, left.consts.opers[oper]['roper'])(right, #right
+                                                                       left, #left
+                                                                       knowns)
+            if ret != NotImplemented: tstack.pop(); tstack.pop();
 
         return ret
 
@@ -82,7 +87,7 @@ class operobj(funcobj):
                     knowns: 'knownsdict',
                     oper: str) -> ('node', NotImplemented):
         direc = oper == '->'
-        left = tstack.pop(-1 -direc) #if direc is 1, pop second to last.
+        left = tstack.pop(~direc) #if direc is 1, pop second to last.
         right = tstack.pop()
         if __debug__:
             assert type(right.obj) == varobj, "Not able to assignment a value to the non-var obj '{}'".format(right.obj)
