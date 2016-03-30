@@ -1,4 +1,5 @@
-'test'.len -> l
+19 -> a;
+1.a -> b;
 @eof
 4 / 2f -> o
 1.23 + 2 -> something;
