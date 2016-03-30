@@ -14,3 +14,9 @@ class obj():
     @classmethod
     def fromstr(self: type, data: str, consts: 'constants') -> ((str, 'obj'), None):
         return None
+
+    def _oper_attribute(self: 'strobj', left: 'node', right: 'node', knowns: 'knowndict') -> 'node':
+        return NotImplemented
+
+    def _oper_rattribute(self: 'strobj', left: 'node', right: 'node', knowns: 'knowndict') -> 'node':
+        return NotImplemented

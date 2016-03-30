@@ -48,6 +48,9 @@ class constants():
                     '^' : flatdict({'obj':operobj, 'rank':  8, 'reqs': ((2,), (0,)), 'loper': '_oper_xor', 'roper': '_oper_rxor'}),
                     '|' : flatdict({'obj':operobj, 'rank':  9, 'reqs': ((2,), (0,)), 'loper': '_oper_or', 'roper': '_oper_ror'}),
                 }),
+                'delims': flatdict({
+                    '.' : flatdict({'obj':operobj, 'rank':  0, 'reqs': ((2, 1), (0,)), 'loper': '_oper_attribute', 'roper': '_oper_rattribute'}),
+                }),
             }),
             'bitwise': flatdict({
                 '~' : flatdict({'obj':operobj, 'rank':None,'reqs': (1, 0)}),
@@ -65,7 +68,7 @@ class constants():
 
             'delims': flatdict({
                 ':' : flatdict({'obj':operobj, 'rank':  0, 'reqs': ((2,), (0,))}),
-                '.' : flatdict({'obj':operobj, 'rank':  0, 'reqs': ((2, 1), (0,))}),
+                # '.' : flatdict({'obj':operobj, 'rank':  0, 'reqs': ((2, 1), (0,)), 'loper': '_oper_attribute', 'roper': '_oper_rattribute'}),
                 ',' : flatdict({'obj':operobj, 'rank': 14, 'reqs': ((2,), (0,))}),
                 ';' : flatdict({'obj':operobj, 'rank': 15, 'reqs': ((1,), (0,))}),
             }),

@@ -43,8 +43,8 @@ class operobj(funcobj):
             ret = self._eval_assign(tstack, ostack, gen, knowns, oper)
 
         #third, see if it's a deliminator
-        elif ret == NotImplemented and oper in opers['delims']:
-            ret = self._eval_delim(tstack, ostack, gen, knowns, oper)
+        elif ret == NotImplemented:
+            ret = self._eval_etc(tstack, ostack, gen, knowns, oper)
 
         #lastly, throw an exception
         if ret == NotImplemented:
@@ -68,7 +68,7 @@ class operobj(funcobj):
             #problem is int base 2 and int base 10 are the same priority... maybe 2.02 and 2.10
             ret = getattr(left.obj, left.consts.opers[oper]['loper'])(left, right, knowns)
 
-        #second, try 'b.__iOPER__.(a)'
+        #second, try 'b.__rOPER__.(a)'
         if ret == NotImplemented and hasattr(right.obj, left.consts.opers[oper]['roper']) and\
                 right.obj == right.obj._pyobj_compare(left.obj): #KeyError: oepr isnt recognized
             ret = getattr(right.obj, left.consts.opers[oper]['roper'])(right, left, knowns)
@@ -91,7 +91,7 @@ class operobj(funcobj):
         knowns[right.data] = left
         return knowns[right.data]
 
-    def _eval_delim(self: 'operobj',
+    def _eval_etc(self: 'operobj',
                    tstack: list,
                    ostack: list,
                    gen: gentype,
@@ -102,18 +102,28 @@ class operobj(funcobj):
         if ret == NotImplemented and oper == ';':
             ret = self._pop(tstack, knowns)
 
-        if ret == NotImplemented and oper == '.':
-            """ if len(ostack) - len(tstack) == 2: 'tstack[-2].tstack[-1]'
-                if len(ostack) - len(tstack) == 1: '0.tstack[-1]'
-                else: NotImplemented
-            """
-            if ret == NotImplemented and (len(tstack) - len(ostack)) == 1:
-                ret = tstack[-1].new(data = str('0.'+self._pop(tstack, knowns).data), genobj = True)
+        # if ret == NotImplemented and oper == '.':
+        #     """ if len(ostack) - len(tstack) == 2: 'tstack[-2].tstack[-1]'
+        #         if len(ostack) - len(tstack) == 1: '0.tstack[-1]'
+        #         else: NotImplemented
+        #     """
+        #     if ret == NotImplemented and hasattr(left.obj, left.consts.opers[oper]['loper']) and\
+        #             left.obj == left.obj._pyobj_compare(right.obj): # KeyError: oper isnt recognized
+        #         #problem is int base 2 and int base 10 are the same priority... maybe 2.02 and 2.10
+        #         ret = getattr(left.obj, left.consts.opers[oper]['loper'])(left, right, knowns)
+
+        #     #second, try 'b.__rOPER__.(a)'
+        #     if ret == NotImplemented and hasattr(right.obj, left.consts.opers[oper]['roper']) and\
+        #             right.obj == right.obj._pyobj_compare(left.obj): #KeyError: oepr isnt recognized
+        #         ret = getattr(right.obj, left.consts.opers[oper]['roper'])(right, left, knowns)
+
+            # if ret == NotImplemented and (len(tstack) - len(ostack)) == 1:
+            #     ret = tstack[-1].new(data = str('0.'+self._pop(tstack, knowns).data), genobj = True)
             
-            if ret == NotImplemented and (len(tstack) - len(ostack)) == 2:
-                ret = tstack[-1].new(
-                           data = str(self._pop(tstack, knowns, -2).data + '.' + self._pop(tstack, knowns).data),
-                           genobj = True)
+            # if ret == NotImplemented and (len(tstack) - len(ostack)) == 2:
+            #     ret = tstack[-1].new(
+            #                data = str(self._pop(tstack, knowns, -2).data + '.' + self._pop(tstack, knowns).data),
+            #                genobj = True)
         
         return ret
 
