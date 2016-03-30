@@ -95,12 +95,12 @@ class _control(flatdict):
         return locals()
     last = property(**last())
 
-    def __getitem__(self: '_control', item: object) -> object:
-        if item == '$':
-            quit()
-        if __debug__ and item not in self.flat:
-            raise KeyError("key '{}' doesn't exist!".format(item))
-        return dict(self.flatpair)[item]
+    # def __getitem__(self: '_control', item: object) -> object:
+    #     if item == '$':
+    #         quit()
+    #     if __debug__ and item not in self.flat:
+    #         raise KeyError("key '{}' doesn't exist!".format(item))
+    #     return dict(self.flatpair)[item]
 
 
 class knowndict(flatdict):
@@ -152,11 +152,16 @@ class knowndict(flatdict):
         return locals()
     l = property(**l())
 
-    def __getitem__(self: 'flatdict', item: object) -> object:
-        if item in self.c:
-            print(item)
-            return self.c[item]
-        return super().__getitem__(item)
+    # def __getitem__(self: 'flatdict', item: object) -> object:
+    #     ret = super().__getitem__(item)
+    #     print(item, repr(ret))
+    #     # print(super(flatdict, ret).__str__())
+    #     # if not isinstance(ret, flatdict):
+    #     #     return ret
+    #     return ret
+    #     # if item in super().__getitem__(self.SCOPE_NAMES['control']):
+    #     #     return self.c[item]
+    #     # return super().__getitem__(item)
 
     def __setitem__(self: 'knowndict', item: object, val: 'node') -> None:
         #TODO: make it so when you set an item, and it exists further down, it sets it there instead.

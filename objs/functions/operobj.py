@@ -14,6 +14,7 @@ class operobj(funcobj):
                 return knowns[ret.data]
             elif dothrow: 
                 raise SyntaxError("Unknown variable '{}'!".format(ret.data))
+        knowns.c.last = ret #is this a good place to put it
         return ret
 
     def evaloper(self: 'operobj',
