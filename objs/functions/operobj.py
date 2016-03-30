@@ -13,14 +13,14 @@ class operobj(funcobj):
         return node
 
     @staticmethod
-    def _pop(ts: list, v: 'flatdict', pos: int = -1)-> 'node':
-        ret = operobj._getobj(ts.pop(pos), v)
+    def _popts(v: 'flatdict', pos: int = -1)-> 'node':
+        ret = operobj._getobj(v.ts.pop(pos), v)
         v.knowns.c.last = ret #this is the last element fount
         return ret
 
     def evaloper(self: 'operobj', v: 'flatdict', oper: str) -> 'node':
         """ if opers are none, use v.knowns.consts.keywords.opers"""
-        opers = v.knowns.consts.keywords.opers
+        opers = v.consts.keywords.opers
         if __debug__:
             assert oper in opers, "Trying to evaloper with no operator!"
             reqs = opers[oper]['reqs']
@@ -60,43 +60,31 @@ class operobj(funcobj):
                 v.ts.pop(); v.ts.pop(); v.ts.append(result);
                 return True
         #second, try 'b.__rOPER__.(a)'
-        if hasattr(right.obj, left.consts.opers[oper]['roper']) and\
+        if hasattr(right.obj, v.consts.opers[oper]['roper']) and\
                 right.obj == right.obj._pyobj_compare(left.obj): #KeyError: oepr isnt recognized
-            result = getattr(right.obj, left.consts.opers[oper]['roper'])(right, left, v)
+            result = getattr(right.obj, v.consts.opers[oper]['roper'])(right, left, v)
             if result != NotImplemented:
                 v.ts.pop(); v.ts.pop(); v.ts.append(result);
                 return True
 
         return False
 
-    def _eval_assign(self: 'operobj',
-                    ts: list,
-                    os: list,
-                    gen: gentype,
-                    knowns: 'knownsdict',
-                    oper: str) -> bool:
+    def _eval_assign(self: 'operobj', v: 'flatdict', oper: str) -> bool:
         direc = oper == '->'
-        left = ts.pop(~direc) #if direc is 1, pop second to last.
-        right = ts.pop()
+        left = self._popts(v, ~direc) #if direc is 1, pop second to last.
+        right = v.ts.pop()
         if __debug__:
             assert type(right.obj) == varobj, "Not able to assignment a value to the non-var obj '{}'".format(right.obj)
             assert list(sorted(right.attrs.keys())) == ['data', 'obj'] #can only be data and object,
                                                                        # nothing more complex than that
-        knowns[right.data] = left
-        ts.append(knowns[right.data])
+        v.knowns[right.data] = left
+        v.ts.append(v.knowns[right.data])
         return True
-
-    def _eval_etc(self: 'operobj',
-                   ts: list,
-                   os: list,
-                   gen: gentype,
-                   knowns: 'knownsdict',
-                   oper: str) -> bool:
+    def _eval_etc(self: 'operobj', v: 'flatdict', oper: str) -> bool:
         if oper == ';':
-            while os:
-                print(os, ts)
-                os[-1]._reduce_os(ts, os, gen, knowns)
-            ts.append(self._pop(ts, knowns))
+            while v.os:
+                v.os[-1].obj._reduce_os(v)
+            v.ts.append(self._popts(v))
             return True
         return False
 
@@ -105,22 +93,22 @@ class operobj(funcobj):
         #         if len(os) - len(ts) == 1: '0.ts[-1]'
         #         else: NotImplemented
         #     """
-        #     if ret == NotImplemented and hasattr(left.obj, left.consts.opers[oper]['loper']) and\
+        #     if ret == NotImplemented and hasattr(left.obj, v.consts.opers[oper]['loper']) and\
         #             left.obj == left.obj._pyobj_compare(right.obj): # KeyError: oper isnt recognized
         #         #problem is int base 2 and int base 10 are the same priority... maybe 2.02 and 2.10
-        #         ret = getattr(left.obj, left.consts.opers[oper]['loper'])(left, right, knowns)
+        #         ret = getattr(left.obj, v.consts.opers[oper]['loper'])(left, right, knowns)
 
         #     #second, try 'b.__rOPER__.(a)'
-        #     if ret == NotImplemented and hasattr(right.obj, left.consts.opers[oper]['roper']) and\
+        #     if ret == NotImplemented and hasattr(right.obj, v.consts.opers[oper]['roper']) and\
         #             right.obj == right.obj._pyobj_compare(left.obj): #KeyError: oepr isnt recognized
-        #         ret = getattr(right.obj, left.consts.opers[oper]['roper'])(right, left, knowns)
+        #         ret = getattr(right.obj, v.consts.opers[oper]['roper'])(right, left, knowns)
 
             # if ret == NotImplemented and (len(ts) - len(os)) == 1:
-            #     ret = ts[-1].new(data = str('0.'+self._pop(ts, knowns).data), genobj = True)
+            #     ret = ts[-1].new(data = str('0.'+self._popts(ts, knowns).data), genobj = True)
             
             # if ret == NotImplemented and (len(ts) - len(os)) == 2:
             #     ret = ts[-1].new(
-            #                data = str(self._pop(ts, knowns, -2).data + '.' + self._pop(ts, knowns).data),
+            #                data = str(self._popts(ts, knowns, -2).data + '.' + self._popts(ts, knowns).data),
             #                genobj = True)
 
     @classmethod

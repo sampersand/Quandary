@@ -56,6 +56,9 @@ class flatdict(dict):
                 return v[item]
 
     def __getattr__(self: 'flatdict', attr: object) -> object:
+        if __debug__:
+            if attr not in self:
+                raise SyntaxError("Unknown attribute '{}'. valid: {}".format(attr, list(self.flat)))
         return self.__getitem__(attr) if attr in self else super().__getattr__(attr)
     def __setattr__(self: 'flatdict', attr: object, val: object) -> None:
         return self.__setitem__(attr, val) if attr in self else super().__setattr__(attr, val)
