@@ -38,10 +38,12 @@ class pyobj(obj):
                 assert hasattr(node1.obj, '_pyobj_valof'),\
                     "The Node's object should have a python object associated with it!"
             objtopass = node1.obj._pyobj_compare(node2.obj, v)
-            return node1.new(\
-                        data = str(self._pyobj_getattr(objtopass._pyobj_valof(node1, v), attr, v)\
-                                (objtopass._pyobj_valof(node2, v))),
-                        obj = objtopass)
+            objattr = self._pyobj_getattr(objtopass._pyobj_valof(node1, v), attr, v)
+            passobj = objtopass._pyobj_valof(node2, v)
+            try:
+                return node1.new(data = str(objattr(passobj)), obj = objtopass)
+            except:
+                return node1.new(data = str(objattr(passobj, v)), obj = objtopass)
         return attr[:6] == '_oper_' and ret or super().__getattr__(attr)
 
 
