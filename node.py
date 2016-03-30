@@ -51,13 +51,15 @@ class node():
         return node(self.consts, kwargs = deepcopy(self._attrs, memo))
 
     @staticmethod
+    def _reduce_os(ts: list, os: list, gen: gentype, knowns: 'knowndict') -> None:
+        if __debug__:
+            assert isinstance(os[-1].obj, objs.operobj), "Expected an operobj, not a '{}'".format(os[-1].obj)
+        ts.append(os[-1].obj.evaloper(ts, os, gen, knowns, os.pop().data))
+
+    @staticmethod
     def evalnode(gen: gentype, knowns: 'knowndict') -> 'node':
         #ONLY SETS TOKENS, NOT OPERS, TO knowns.c.last
         ts, os = [], [] #token / oper stack
-        def reduce_os():
-            if __debug__:
-                assert isinstance(os[-1].obj, objs.operobj), "Expected an operobj, not a '{}'".format(o.obj)
-            ts.append(os[-1].obj.evaloper(ts, os, gen, knowns, os.pop().data))
 
         for t in gen:
             if t.data in knowns.consts.punc.parens:
@@ -65,16 +67,16 @@ class node():
                     ts.append(node.evalnode(gen, knowns))
                 else:
                     while os:
-                        reduce_os()
+                        node._reduce_os(ts, os, gen, knowns)
                     return ts.pop()
             elif isinstance(t.obj, objs.operobj):
                 while os and knowns.consts.opers[os[-1].data]['rank'] <= knowns.consts.opers[t.data]['rank']:
-                    reduce_os()
+                    node._reduce_os(ts, os, gen, knowns)
                 os.append(t)
             else:
                 ts.append(t)
         while os:
-            reduce_os()
+            node._reduce_os(ts, os, gen, knowns)
         return ts.pop()
 
     def new(self: 'node', consts = None, **kwargs):

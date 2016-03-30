@@ -70,7 +70,7 @@ class constants():
                 ':' : flatdict({'obj':operobj, 'rank':  0, 'reqs': ((2,), (0,))}),
                 # '.' : flatdict({'obj':operobj, 'rank':  0, 'reqs': ((2, 1), (0,)), 'loper': '_oper_attribute', 'roper': '_oper_rattribute'}),
                 ',' : flatdict({'obj':operobj, 'rank': 14, 'reqs': ((2,), (0,))}),
-                ';' : flatdict({'obj':operobj, 'rank': 0, 'reqs': ((1,), (0,))}),
+                ';' : flatdict({'obj':operobj, 'rank': 14, 'reqs': ((1,), (0,))}),
             }),
         })
         # self.parens = {'{':0, '[':0, '(':0, ')':1 ']':1, '}':1,}

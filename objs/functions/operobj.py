@@ -105,6 +105,9 @@ class operobj(funcobj):
         ret = NotImplemented
 
         if ret == NotImplemented and oper == ';':
+            while ostack:
+                print(ostack, tstack)
+                ostack[-1]._reduce_os(tstack, ostack, gen, knowns)
             ret = self._pop(tstack, knowns)
 
         # if ret == NotImplemented and oper == '.':
