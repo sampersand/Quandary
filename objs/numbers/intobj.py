@@ -53,3 +53,13 @@ class intobj(regexobj, pyobj, numobj):
         if len(ret) > 1 and ret[0][:2] in self.BASES:
             base = self.BASES[ret[0][:2]]
         return ret[0], intobj(base = base)
+
+    def _oper_attribute(self: 'strobj', left: 'node', right: 'node', knowns: 'knowndict') -> 'node':
+        ret = super()._oper_attribute(left, right, knowns)
+        if ret != NotImplemented:
+            return ret
+        if not isinstance(right.obj, intobj):
+            return NotImplemented
+        #This is assuming that both left and right are intobjs
+        #This is effectively ####.####
+        return left.new(data = '{}.{}'.format(left.obj._pyobj_valof(left), left.obj._pyobj_valof(right)), genobj = True)
