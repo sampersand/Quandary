@@ -1,6 +1,7 @@
 from typing import Callable, Any
 from types import GeneratorType as gentype
 from copy import deepcopy
+from knowndict import flatdict
 import objs
 class node():
     def __init__(self: 'node', consts: 'constants', **kwargs: dict) -> None:
@@ -58,25 +59,24 @@ class node():
 
     @staticmethod
     def evalnode(gen: gentype, knowns: 'knowndict') -> 'node':
+        v = flatdict(knowns = knowns, gen = gen, ts = [], os = [])
         #ONLY SETS TOKENS, NOT OPERS, TO knowns.c.last
-        ts, os = [], [] #token / oper stack
-
-        for t in gen:
-            if t.data in knowns.consts.punc.parens:
-                if not knowns.consts.punc.parens[t.data]:
-                    ts.append(node.evalnode(gen, knowns))
+        for t in v.gen:
+            if t.data in v.knowns.consts.punc.parens:
+                if not v.knowns.consts.punc.parens[t.data]:
+                    v.ts.append(node.evalnode(gen, v.knowns))
                 else:
-                    while os:
-                        node._reduce_os(ts, os, gen, knowns)
-                    return ts.pop()
-            elif isinstance(t.obj, objs.operobj):
-                while os and knowns.consts.opers[os[-1].data]['rank'] <= knowns.consts.opers[t.data]['rank']:
-                    node._reduce_os(ts, os, gen, knowns)
+                    while v.os:
+                        node._reduce_os(v)
+                    return v.ts.pop()
+            elif t.obj.isoper():
+                while os and os[-1].obj._oper_higher_rank_than(t, ts, os, gen, v.knowns):
+                    node._reduce_os(ts, os, gen, v.knowns)
                 os.append(t)
             else:
                 ts.append(t)
         while os:
-            node._reduce_os(ts, os, gen, knowns)
+            node._reduce_os(ts, os, gen, v.knowns)
         return ts.pop()
 
     def new(self: 'node', consts = None, **kwargs):

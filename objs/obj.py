@@ -7,21 +7,12 @@ class obj():
         return type(self).__qualname__+'({})'.\
             format(kwargs and ', '.join(str(k) + ' = ' + str(v) for k,v in kwargs.items()) or '')
 
-    def isreference(self: 'obj') -> bool:
-        """ True if this class is a reference to another object. Currently, only varobj returns true."""
-        return False
+    def __getattr__(self: 'obj', attr: str) -> object:
+        if len(attr) < 2 or attr[:2] != 'is':
+            raise SyntaxError("Unknown {} attribute '{}'!".format(type(self), attr))
+        return False#attr[2:] in self._ATTRS
 
     @classmethod
     def fromstr(self: type, data: str, consts: 'constants') -> ((str, 'obj'), None):
         return None
 
-    def _oper_attribute(self: 'strobj', left: 'node', right: 'node', knowns: 'knowndict') -> ('node', NotImplemented):
-        if right.obj.isreference():
-            return self._oper_attribute_attr(left, right.data, knowns)
-        return NotImplemented
-
-    def _oper_rattribute(self: 'strobj', left: 'node', right: 'node', knowns: 'knowndict') -> ('node', NotImplemented):
-        return NotImplemented
-
-    def _oper_attribute_attr(self: 'strobj', left: 'node', attr: str, knowns: 'knowndict') -> 'node':
-        return NotImplemented
