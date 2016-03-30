@@ -12,7 +12,7 @@ class operobj(funcobj):
         if ret.obj.isreference():
             if ret.data in knowns: #doesn't check for anything else
                 return knowns[ret.data]
-            elif dothrow:
+            elif dothrow: 
                 raise SyntaxError("Unknown variable '{}'!".format(ret.data))
         return ret
 

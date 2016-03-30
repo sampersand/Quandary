@@ -77,6 +77,13 @@ class flatdict(dict):
 class _control(flatdict):
     #TODO: marge this with flatdict
     CONTROL_NAMES = {'last':'$', 'ret':'$ret', 'esc':'$esc'}
+
+    def __new__(self, knowns):
+        return super().__new__(self, {})
+
+    def __init__(self, knowns):
+        self.knowns = knowns
+
     def last():
         doc = "The last element evaluated."
         def fget(self: '_control') -> 'node':
@@ -88,6 +95,14 @@ class _control(flatdict):
         return locals()
     last = property(**last())
 
+    def __getitem__(self: '_control', item: object) -> object:
+        if item == '$':
+            quit()
+        if __debug__ and item not in self.flat:
+            raise KeyError("key '{}' doesn't exist!".format(item))
+        return dict(self.flatpair)[item]
+
+
 class knowndict(flatdict):
     """ The object that keeps tracks of all the currently known variables. """
 
@@ -96,7 +111,7 @@ class knowndict(flatdict):
         super().__init__(args or {})
         self.consts = consts
         self.g, self.l = flatdict(), flatdict()
-        self.c = _control()
+        self.c = _control(self)
 
     def g():
         doc = "The known global variables"
@@ -136,6 +151,12 @@ class knowndict(flatdict):
             self[self.SCOPE_NAMES['local']] = flatdict()
         return locals()
     l = property(**l())
+
+    def __getitem__(self: 'flatdict', item: object) -> object:
+        if item in self.c:
+            print(item)
+            return self.c[item]
+        return super().__getitem__(item)
 
     def __setitem__(self: 'knowndict', item: object, val: 'node') -> None:
         #TODO: make it so when you set an item, and it exists further down, it sets it there instead.
