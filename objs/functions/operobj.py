@@ -7,13 +7,16 @@ class operobj(funcobj):
     """ An operator. """
 
     @staticmethod
-    def _pop(tstack, knowns, pos = -1, dothrow = True):
-        ret = tstack.pop(pos)
-        if ret.obj.isreference():
-            if ret.data in knowns: #doesn't check for anything else
-                ret =  knowns[ret.data]
+    def _getobj(node: 'node', knowns: 'knownsdict', dothrow: bool = True) -> 'node':
+        if node.obj.isreference():
+            if node.data in knowns: #doesn't check for anything else
+                return knowns[node.data]
             elif dothrow: 
-                raise SyntaxError("Unknown variable '{}'!".format(ret.data))
+                raise SyntaxError("Unknown variable '{}'!".format(node.data))
+        return node
+    @staticmethod
+    def _pop(tstack: list, knowns: 'knownsdict', pos: int = -1, dothrow: bool = True)-> 'node':
+        ret = operobj._getobj(tstack.pop(pos), knowns, dothrow)
         knowns.c.last = ret #this is the last element fount
         return ret
 
@@ -57,8 +60,8 @@ class operobj(funcobj):
                     gen: gentype,
                     knowns: 'knownsdict',
                     oper: str) -> bool:
-        left = tstack[-2]
-        right = tstack[-1]
+        left = self._getobj(tstack[-2], knowns)
+        right = self._getobj(tstack[-1], knowns)
 
         #first, try 'a.__OPER__.(b)'
         if hasattr(left.obj, left.consts.opers[oper]['loper']) and\
