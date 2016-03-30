@@ -11,7 +11,7 @@ class strobj(regexobj, pyobj, obj):
 
     @staticmethod
     def _stripquotes(s: str, consts: 'constants') -> str:
-        return s[1:-1] if strobj._isquotedstr(s,) else s
+        return s[1:-1] if strobj._isquotedstr(s, consts) else s
 
     def _oper_radd(self: 'strobj', right: 'node', left: 'node', knowns: 'knowndict') -> 'node':
         return self._oper_add(left, right, knowns)
