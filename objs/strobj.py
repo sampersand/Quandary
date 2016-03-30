@@ -1,4 +1,4 @@
-from objs import obj, pyobj, regexobj
+from objs import obj, pyobj, regexobj, intobj
 class strobj(regexobj, pyobj, obj):
     """ A String object. """
     _regex = r'(["\']).*\1'

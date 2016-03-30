@@ -11,8 +11,9 @@ class operobj(funcobj):
         if node.obj.isreference():
             if node.data in knowns: #doesn't check for anything else
                 return knowns[node.data]
-            elif dothrow: 
-                raise SyntaxError("Unknown variable '{}'!".format(node.data))
+            elif dothrow: #not throwing for now because some cases it isn't needed
+                pass
+                # raise SyntaxError("Unknown variable '{}'!".format(node.data))
         return node
     @staticmethod
     def _pop(tstack: list, knowns: 'knownsdict', pos: int = -1, dothrow: bool = True)-> 'node':
