@@ -15,8 +15,13 @@ class obj():
     def fromstr(self: type, data: str, consts: 'constants') -> ((str, 'obj'), None):
         return None
 
-    def _oper_attribute(self: 'strobj', left: 'node', right: 'node', knowns: 'knowndict') -> 'node':
+    def _oper_attribute(self: 'strobj', left: 'node', right: 'node', knowns: 'knowndict') -> ('node', NotImplemented):
+        if right.obj.isreference():
+            return self._oper_attribute_attr(left, right.data, knowns)
         return NotImplemented
 
-    def _oper_rattribute(self: 'strobj', left: 'node', right: 'node', knowns: 'knowndict') -> 'node':
+    def _oper_rattribute(self: 'strobj', left: 'node', right: 'node', knowns: 'knowndict') -> ('node', NotImplemented):
+        return _oper_attribute
+
+    def _oper_attribute_attr(self: 'strobj', left: 'node', attr: str, knowns: 'knowndict') -> 'node':
         return NotImplemented

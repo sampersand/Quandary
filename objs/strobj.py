@@ -1,4 +1,4 @@
-from objs import obj, pyobj, regexobj, intobj
+from objs import obj, pyobj, regexobj
 class strobj(regexobj, pyobj, obj):
     """ A String object. """
     _regex = r'(["\']).*\1'
@@ -8,6 +8,10 @@ class strobj(regexobj, pyobj, obj):
     @staticmethod
     def _isquotedstr(s: str, consts: 'constants') -> bool:
         return s[0] in consts.punc.quotes and s[-1] in consts.punc.quotes
+
+    @staticmethod
+    def _stripquotes(s: str, consts: 'constants') -> str:
+        return s[1:-1] if strobj._isquotedstr(s, consts) else s
 
     def _oper_radd(self: 'strobj', right: 'node', left: 'node', knowns: 'knowndict') -> 'node':
         return self._oper_add(left, right, knowns)
@@ -29,16 +33,13 @@ class strobj(regexobj, pyobj, obj):
         return left.new(data = data, obj = strobj)
         # if args[0][-1] in args[0].control
 
-    def _oper_attribute(self: 'strobj', left: 'node', right: 'node', knowns: 'knowndict') -> 'node':
-        ret = super()._oper_attribute(left, right, knowns)
+    def _oper_attribute_attr(self: 'strobj', left: 'node', attr: str, knowns: 'knowndict') -> 'node':
+        ret = super()._oper_attribute_attr(left, attr, knowns)
         if ret != NotImplemented:
             return ret
-        if not isinstance(right.obj, intobj):
-            return NotImplemented
-        #This is assuming that both left and right are intobjs
-        #This is effectively ####.####
-        return left.new(data = '{}.{}'.format(left.obj._pyobj_valof(left), left.obj._pyobj_valof(right)), genobj = True)
-
+        if attr == 'len':
+            return left.new(data = str(len(self._stripquotes(left.data, knowns.consts))), genobj = True)
+        return NotImplemented
 
 
 
