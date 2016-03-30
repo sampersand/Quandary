@@ -52,34 +52,34 @@ class node():
         return node(self.consts, kwargs = deepcopy(self._attrs, memo))
 
     @staticmethod
-    def _reduce_ostack(vals: flatdict) -> None:
+    def _reduce_os(v: flatdict) -> None:
         if __debug__:
-            assert isinstance(vals.ostack[-1].obj, objs.operobj),\
-                "Expected an operobj, not a '{}'".format(vals.ostack[-1].obj)
-        vals.ostack[-1].obj.evaloper(vals, vals.ostack.pop().data)
+            assert isinstance(v.os[-1].obj, objs.operobj),\
+                "Expected an operobj, not a '{}'".format(v.os[-1].obj)
+        v.os[-1].obj.evaloper(v, v.os.pop().data)
 
     @staticmethod
     def evalnode(gen: gentype, knowns: 'knowndict') -> 'node':
-        vals = flatdict(knowns = knowns, gen = gen, tstack = [], ostack = [])
+        v = flatdict(knowns = knowns, gen = gen, ts = [], os = [], consts = knowns.consts)
         #ONLY SETS TOKENS, NOT OPERS, TO knowns.c.last
-        for t in vals.gen:
-            if t.data in vals.knowns.consts.punc.parens:
-                if not vals.knowns.consts.punc.parens[t.data]:
-                    vals.tstack.append(node.evalnode(gen, vals.knowns).tstack[-1])
+        for t in v.gen:
+            if t.data in v.consts.punc.parens:
+                if not v.consts.punc.parens[t.data]:
+                    v.ts.append(node.evalnode(gen, v.knowns).ts[-1])
                 else:
-                    while vals.ostack:
-                        node._reduce_ostack(vals)
-                    return vals.tstack.pop()
+                    while v.os:
+                        node._reduce_os(v)
+                    return v.ts.pop()
             elif isinstance(t.obj, objs.operobj):
-                while vals.ostack and vals.knowns.consts.opers[vals.ostack[-1].data].rank <=\
-                                      vals.knowns.consts.opers[t.data].rank:
-                    node._reduce_ostack(vals)
-                vals.ostack.append(t)
+                while v.os and v.consts.opers[v.os[-1].data].rank <=\
+                                      v.consts.opers[t.data].rank:
+                    node._reduce_os(v)
+                v.os.append(t)
             else:
-                vals.tstack.append(t)
-        while vals.ostack:
-            node._reduce_ostack(vals)
-        return vals
+                v.ts.append(t)
+        while v.os:
+            node._reduce_os(v)
+        return v
 
     def new(self: 'node', consts = None, **kwargs):
         return node(consts or self.consts, **kwargs)
