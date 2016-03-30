@@ -28,3 +28,39 @@ class strobj(pyobj, obj):
             data = lstr + rstr
         return left.new(data = data, obj = strobj)
         # if args[0][-1] in args[0].control
+
+    def _oper_attribute(self: 'strobj', left: 'node', right: 'node', knowns: 'knowndict') -> 'node':
+        ret = super()._oper_attribute(left, right, knowns)
+        if ret != NotImplemented:
+            return ret
+        quit(right.obj)
+        if not isinstance(right.obj, intobj):
+            return NotImplemented
+        #This is assuming that both left and right are intobjs
+        #This is effectively ####.####
+        return left.new(data = '{}.{}'.format(left.obj._pyobj_valof(left), left.obj._pyobj_valof(right)), genobj = True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
