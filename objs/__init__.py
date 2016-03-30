@@ -18,10 +18,10 @@ if '__init__' not in __name__:
 
     # _regexes = {re.compile(o._regex):o for o in locals().values() if hasattr(o, '_regex')}
 
-    def getobj(node: 'node', data: (str, None), checkorder = __all__) -> obj:
+    def getobj(consts: 'constants', data: (str, None), checkorder = __all__) -> obj:
         if data == None: return data, varobj()
         for cobj in checkorder:
-            ret = globals()[cobj].fromstr(data, node.consts)
+            ret = globals()[cobj].fromstr(data, consts)
             if ret != None:
                 return ret
         # if data == '':

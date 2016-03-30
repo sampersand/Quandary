@@ -135,16 +135,6 @@ class operobj(funcobj):
             #                data = str(self._pop(tstack, knowns, -2).data + '.' + self._pop(tstack, knowns).data),
             #                genobj = True)
 
-    @classmethod
-    def fromstr(self: type, data: str, consts: 'constants') -> ((str, 'operobj'), None):
-        if data in consts.opers:
-            return data, consts.opers[data]['obj']()
-        return None
-
-
-
-
-
 
 
 

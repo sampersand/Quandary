@@ -8,7 +8,7 @@ if __name__ == '__main__':
         gen = getiter(n.consts, f.read())
     known = knowndict(n.consts)
     print('----')
-    print(n.evalnode(gen, known), known)
+    print(n.evalnode(gen, known).ts[0], known)
     print('----\n')
     if __debug__ and '$dnd' not in known:
         print(known, end = '\n--\n')

@@ -38,5 +38,5 @@ class pyobj(obj):
                         data = self._pyobj_getattr(objtopass._pyobj_valof(node1), attr)\
                                 (objtopass._pyobj_valof(node2)),
                         obj = objtopass)
-        return attr[:6] == '_oper_' and ret or super().__getattr____(attr)
+        return attr[:6] == '_oper_' and ret or super().__getattr__(attr)
 

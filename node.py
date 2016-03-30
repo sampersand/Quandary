@@ -11,11 +11,11 @@ class node():
             if kwargs['genobj']:
                 if __debug__ and 'obj' in kwargs:
                     raise KeyError("Error! both 'genobj' and 'obj' were passed!") #might be a warning in the future
-                kwargs['data'], kwargs['obj'] = objs.getobj(self, kwargs['data'])
+                kwargs['data'], kwargs['obj'] = objs.getobj(self.consts, kwargs['data'])
             del kwargs['genobj']
 
         if 'obj' not in kwargs:
-            kwargs['obj'] = objs.getobj(self, None)
+            kwargs['obj'] = objs.getobj(self.consts, None)
 
         for key in kwargs:
             self._attrs[key] = kwargs[key]
@@ -52,32 +52,33 @@ class node():
         return node(self.consts, kwargs = deepcopy(self._attrs, memo))
 
     @staticmethod
-    def _reduce_os(ts: list, os: list, gen: gentype, knowns: 'knowndict') -> None:
+    def _reduce_os(vals: flatdict) -> None:
         if __debug__:
-            assert isinstance(os[-1].obj, objs.operobj), "Expected an operobj, not a '{}'".format(os[-1].obj)
-        os[-1].obj.evaloper(ts, os, gen, knowns, os.pop().data)
+            assert isinstance(vals.os[-1].obj, objs.operobj), "Expected an operobj, not a '{}'".format(vals.os[-1].obj)
+        vals.os[-1].obj.evaloper(vals, os.pop().data)
 
     @staticmethod
     def evalnode(gen: gentype, knowns: 'knowndict') -> 'node':
-        v = flatdict(knowns = knowns, gen = gen, ts = [], os = [])
+        vals = flatdict(knowns = knowns, gen = gen, ts = [], os = [])
         #ONLY SETS TOKENS, NOT OPERS, TO knowns.c.last
-        for t in v.gen:
-            if t.data in v.knowns.consts.punc.parens:
-                if not v.knowns.consts.punc.parens[t.data]:
-                    v.ts.append(node.evalnode(gen, v.knowns))
+        for t in vals.gen:
+            print(t.obj, isinstance(t.obj, objs.operobj))
+            if t.data in vals.knowns.consts.punc.parens:
+                if not vals.knowns.consts.punc.parens[t.data]:
+                    vals.ts.append(node.evalnode(gen, vals.knowns).ts[-1])
                 else:
-                    while v.os:
-                        node._reduce_os(v)
-                    return v.ts.pop()
-            elif t.obj.isoper():
-                while os and os[-1].obj._oper_higher_rank_than(t, ts, os, gen, v.knowns):
-                    node._reduce_os(ts, os, gen, v.knowns)
-                os.append(t)
+                    while vals.os:
+                        node._reduce_os(vals)
+                    return vals.ts.pop()
+            elif isinstance(t.obj, objs.operobj):
+                while vals.os and vals.knowns.consts.opers[vals.os[-1].data].rank <= knowns.consts.opers[t.data].rank:
+                    node._reduce_os(vals)
+                vals.os.append(t)
             else:
-                ts.append(t)
-        while os:
-            node._reduce_os(ts, os, gen, v.knowns)
-        return ts.pop()
+                vals.ts.append(t)
+        while vals.os:
+            node._reduce_os(vals)
+        return vals
 
     def new(self: 'node', consts = None, **kwargs):
         return node(consts or self.consts, **kwargs)
