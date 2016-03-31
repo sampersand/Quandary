@@ -1,0 +1,1 @@
+from objs.obj import obj
