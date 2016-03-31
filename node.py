@@ -3,8 +3,12 @@ from types import GeneratorType as gentype
 from copy import deepcopy
 from knowndict import flatdict
 import objs
+from utils import thisfunc, checkparams
 class node():
     def __init__(self: 'node', consts: 'constants', **kwargs: dict) -> None:
+        if __debug__:
+            print(globals().keys(), globals()['node'])
+            assert checkparams(thisfunc(globals))
         super().__setattr__('consts', consts)
         super().__setattr__('_attrs', {})
         if 'genobj' in kwargs and 'data' in kwargs:
