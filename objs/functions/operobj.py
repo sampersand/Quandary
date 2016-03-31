@@ -53,7 +53,6 @@ class operobj(funcobj):
         right = self._getobj(v.ts[-1], v)
 
         #first, try 'a.__OPER__.(b)'
-        print(left.obj)
         if hasattr(left.obj, v.consts.opers[oper]['loper']) and\
                 left.obj == left.obj._pyobj_compare(right.obj, v): # KeyError: oper isnt recognized
             result = getattr(left.obj, v.consts.opers[oper]['loper'])(left, right, v)
