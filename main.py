@@ -1,3 +1,11 @@
+from typing import Callable
+def checkannotations(func: Callable, params: dict):
+    annotations = func.__annotations__
+    for param in params:
+        if param not in annotations or (type(params[param]).__qualname__ != str(annotations[param]) and
+                                        type(params[param]).__qualname__ != annotations[param].__qualname__):
+            return False
+    return True
 from constants import constants
 from node import node, getiter
 from knowndict import knowndict
