@@ -11,3 +11,11 @@ class obj():
     def fromstr(self: type, data: str, consts: 'constants') -> ((str, 'obj'), None):
         return None
 
+    def _oper_attribute(self: 'obj', left: 'node', right: 'node', v: 'flatdict') -> 'node':
+        from objs import varobj
+        if isinstance(right.obj, varobj):
+            return self._oper_attribute_getattr(left, right.data, v)
+        return NotImplemented
+
+    def _oper_attribute_getattr(self: 'strobj', left: 'node', attr: str, v: 'flatdict') -> 'node':
+        return NotImplemented

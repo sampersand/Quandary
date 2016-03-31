@@ -1,4 +1,5 @@
-
+'a man a plan a canal panama'.len -> b
+@eof
 4 / 2 -> o;
 than <- (3 + 4) * 5;
 @eof

@@ -33,12 +33,12 @@ class strobj(regexobj, pyobj, obj):
         return left.new(data = data, obj = strobj)
         # if args[0][-1] in args[0].control
 
-    def _oper_attribute_attr(self: 'strobj', left: 'node', attr: str, knowns: 'knowndict') -> 'node':
-        ret = super()._oper_attribute_attr(left, attr, knowns)
+    def _oper_attribute_getattr(self: 'strobj', left: 'node', attr: str, v: 'flatdict') -> 'node':
+        ret = super()._oper_attribute_getattr(left, attr, v)
         if ret != NotImplemented:
             return ret
         if attr == 'len':
-            return left.new(data = str(len(self._stripquotes(left.data, knowns))), genobj = True)
+            return left.new(data = str(len(self._stripquotes(left.data, v.consts))), genobj = True)
         return NotImplemented
 
 
