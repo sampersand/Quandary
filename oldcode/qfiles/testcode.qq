@@ -1,0 +1,7 @@
+'a man a plan a canal panama' + $ + 'a' -> b
+@eof
+4 / 2 -> o;
+than <- (3 + 4) * 5;
+@eof
+1.23 + 2 -> something;
+1 + 2 * 3 ** 4 / 5.0 -> other;
