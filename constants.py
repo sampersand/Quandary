@@ -1,3 +1,4 @@
+
 class _set(set):
     def __contains__(self, val) -> bool:
         return bool(val and super().__contains__(val))
